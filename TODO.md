@@ -1,0 +1,25 @@
+# Project TODO
+
+## Completed
+- [x] Load inpatient claims data (66,773 rows)
+- [x] Data quality checks
+- [x] Length of stay calculation
+- [x] Average LOS by DRG
+- [x] Patient admission ranking
+
+## In Progress
+- [ ] 30-day readmission flag (Week 2 centerpiece)
+- [ ] Readmission rate by DRG
+
+## Upcoming
+- [ ] PMPM approximation
+- [ ] High-utilizer flagging
+- [ ] Polish and document final analyses
+- [ ] Update README Analyses section
+- [ ] Add Tableau visualization (stretch goal)
+
+## Known Data Limitations
+- Synthetic data — patterns may not reflect real Medicare population
+- Dates stored as YYYYMMDD strings, require STR_TO_DATE() conversion
+- NCH_BENE_IP_DDCTBL_AMT: 3.26% blank, loaded as 0
+- CLM_UTLZTN_DAY_CNT: 3.5% blank, loaded as 0
