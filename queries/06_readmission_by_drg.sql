@@ -19,6 +19,10 @@ DATEDIFF(STR_TO_DATE(next_admission, '%Y%m%d'), STR_TO_DATE(NCH_BENE_DSCHRG_DT, 
 THEN 'thirty_day_readmission' ELSE 'non_readmission' END AS readmission_class 
 FROM CTE )
 
-SELECT *
+
+SELECT 
+	CLM_DRG_CD, 
+	ROUND(AVG(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1.0 ELSE 0 END),2) AS readmission_rate
 FROM CTE2
+GROUP BY CLM_DRG_CD
 
