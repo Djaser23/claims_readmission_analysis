@@ -22,7 +22,16 @@ FROM CTE )
 
 SELECT 
 	CLM_DRG_CD, 
-	ROUND(AVG(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1.0 ELSE 0 END),2) AS readmission_rate
+	ROUND(AVG(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1.0 ELSE 0 END),2) AS readmission_rate,
+    COUNT(*) AS total_admissions
 FROM CTE2
 GROUP BY CLM_DRG_CD
+ORDER BY readmission_rate DESC
 
+/*
+Next up:
+address data censoring with max date
+write the limitation
+consider low volume threshold for total admissions
+review drg readmission rates given these limitations
+*/
