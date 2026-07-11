@@ -21,7 +21,7 @@ https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-
 - `data_quality_log.md` — running log of data quality findings
 
 ## Analyses
-- In progress
+- 30 day readmission analysis (2 versions - with and without single day readmissions with discussion of advantages of each approach in comments)
 
 ## Tools
 MySQL Workbench
