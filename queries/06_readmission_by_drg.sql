@@ -26,12 +26,15 @@ SELECT
     COUNT(*) AS total_admissions
 FROM CTE2
 GROUP BY CLM_DRG_CD
+HAVING readmission_rate * total_admissions >=10 AND
+total_admissions * (1 - readmission_rate) >= 10
 ORDER BY readmission_rate DESC
 
 /*
 Next up:
 address data censoring with max date
 write the limitation
-consider low volume threshold for total admissions
+consider low volume threshold for total admissions = updated query with HAVING condition 
+to display only statistically significant readmission rates with CLT formula 
 review drg readmission rates given these limitations
 */
