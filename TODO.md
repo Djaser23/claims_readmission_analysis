@@ -10,6 +10,11 @@
 
 ## In Progress
 - [ ] Readmission rate by DRG — in progress (classification complete, aggregation pending)
+- [ ] Address data censoring with Max date (see NCH_BENE_DSCHRG_DT,CLM_ADMSN_DT)
+- [ ] Explain date limitation in comments section and then in data quality log
+- [ ] Explain CLT formula in HAVING in more detail in the comments
+- [ ] Review and discuss DRG readmission rates in comments
+- [ ] Resolve additional folder appearing in icloud
 
 ## Upcoming
 - [ ] PMPM approximation
