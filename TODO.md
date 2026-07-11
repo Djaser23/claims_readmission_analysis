@@ -6,10 +6,10 @@
 - [x] Length of stay calculation
 - [x] Average LOS by DRG
 - [x] Patient admission ranking
+- [x] 30-day readmission flag (with and without 1-day gap exclusion)
 
 ## In Progress
-- [ ] 30-day readmission flag (Week 2 centerpiece)
-- [ ] Readmission rate by DRG
+- [ ] Readmission rate by DRG — in progress (classification complete, aggregation pending)
 
 ## Upcoming
 - [ ] PMPM approximation
