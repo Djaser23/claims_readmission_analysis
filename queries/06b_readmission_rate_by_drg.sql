@@ -5,23 +5,6 @@ This may capture planned transfers
 */
 
 /* 
-Create a CTE that filters out censored date - dates for which a 30 day readmission
-rate is impossible
-
-SELECT *
-FROM censored_data_filter
-
-,censored_data_filter AS (
-SELECT MAX(STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d')) - 30 AS adj_max_discharge 
-FROM inpatient_claims)
-
-SELECT DESYNPUF_ID, NCH_BENE_DSCHRG_DT 
-FROM inpatient_claims
-WHERE NCH_BENE_DSCHRG_DT < (SELECT adj_max_discharge  
-FROM censored_data_filter)
-ORDER BY NCH_BENE_DSCHRG_DT DESC
-LIMIT 10
-
 */
 
 WITH censored_data_filter AS (
@@ -36,7 +19,6 @@ FROM inpatient_claims
 WHERE NCH_BENE_DSCHRG_DT < (SELECT adj_max_discharge  
 FROM censored_data_filter)
 )
-
 
 
 ,CTE3 AS (
@@ -63,7 +45,7 @@ ORDER BY readmission_rate DESC
 
 /*
 Next up:
-address data censoring with max date
+address data censoring with max date = done but needs writeup
 write the limitation
 consider low volume threshold for total admissions = updated query with HAVING condition 
 to display only statistically significant readmission rates with CLT formula 
