@@ -5,10 +5,19 @@ This may capture planned transfers
 */
 
 /* 
+
+
+-- PREVIOUS
+WITH censored_data_filter AS (
+SELECT MAX(STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d')) - 30 AS adj_max_discharge 
+FROM inpatient_claims)
+
 */
 
 WITH censored_data_filter AS (
-SELECT MAX(STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d')) - 30 AS adj_max_discharge 
+SELECT
+DATE_SUB(STR_TO_DATE(MAX(NCH_BENE_DSCHRG_DT), '%Y%m%d'), INTERVAL 30 DAY) 
+AS adj_max_discharge 
 FROM inpatient_claims)
 
 
