@@ -11,3 +11,6 @@ Decision: treat as 0 for now. REVISIT: decide whether 0 vs NULL affects utilizat
 - Likely explanation: synthetic data may not replicate known clustering patterns
 - Known limitation: Query 1 definition includes 1-day gaps which may represent transfers rather than true readmissions. 
 - Decision: Write an accompanying query which excludes the 1 day readmission incidence. The difference between the two counts is 292 accounting for approximately 4.5% of the total 30 day readmission occurrences. 
+- Known limitation: Data censoring due to discharge dates within the last 30 days in the dataset preclude the possibility of having a 30 day readmission for those DRG claims. 
+- Decision: Create a filter using a CTE to remove that subset of data to get accurate readmission rates
+- 13,930 discharges (20.86%) fell within 30 days of the observation window end date (2010-12-31) and were excluded from readmission rate calculations due to censoring. This represents a significant data limitation. Readmission rates are calculated on the remaining 52,843 uncensored discharges.
