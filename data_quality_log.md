@@ -13,4 +13,4 @@ Decision: treat as 0 for now. REVISIT: decide whether 0 vs NULL affects utilizat
 - Decision: Write an accompanying query which excludes the 1 day readmission incidence. The difference between the two counts is 292 accounting for approximately 4.5% of the total 30 day readmission occurrences. 
 - Known limitation: Data censoring due to discharge dates within the last 30 days in the dataset preclude the possibility of having a 30 day readmission for those DRG claims. 
 - Decision: Create a filter using a CTE to remove that subset of data to get accurate readmission rates
-- 13,930 discharges (20.86%) fell within 30 days of the observation window end date (2010-12-31) and were excluded from readmission rate calculations due to censoring. This represents a significant data limitation. Readmission rates are calculated on the remaining 52,843 uncensored discharges.
+-324 discharges (0.49%) fell within 30 days of the observation window end date (2010-12-31) and were excluded from readmission rate calculations due to censoring. Minimal impact on analysis. Note: date fields stored as YYYYMMDD strings — STR_TO_DATE() required for all date math.

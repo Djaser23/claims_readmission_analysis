@@ -11,7 +11,7 @@
 - [x] Address data censoring with Max date (see NCH_BENE_DSCHRG_DT,CLM_ADMSN_DT)
 - [x] Explain CLT formula in HAVING in more detail in the comments
 - [x] Review and discuss DRG readmission rates in comments
-- [] Explain date limitation in comments section and then in data quality log
+- [x] Explain date limitation in comments section and then in data quality log
 
 ## In Progress
 
