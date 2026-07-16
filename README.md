@@ -19,13 +19,22 @@ https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-
 ## Project Structure
 - `queries/` — SQL scripts for data setup, quality checks, and analysis
 - `data_quality_log.md` — running log of data quality findings
+- `analysis/` - folder for ipynb files with continued analysis and visualization
+
 
 ## Analyses
 - 30 day readmission analysis (2 versions - with and without single day readmissions with discussion of advantages of each approach in comments)
+- `readmission_analysis.ipynb` - Top 20 readmission rates by DRG with national average comparison. 
+
+## Preview
+![Top 20 DRGs by 30-Day Readmission Rate](images/top20_drg_readmission_rate.png)
 
 ## Tools
 MySQL Workbench
 GitHub
+Python
+pandas
+matplotlib
 
 ## Status
-In progress — Week 1 complete
+In progress — SQL analysis complete, Python visualization underway, ICD-9 condition mapping and BigQuery extension planned
