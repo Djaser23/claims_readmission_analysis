@@ -12,20 +12,29 @@
 - [x] Explain CLT formula in HAVING in more detail in the comments
 - [x] Review and discuss DRG readmission rates in comments
 - [x] Explain date limitation in comments section and then in data quality log
-
-## In Progress
-
-## In Progress - Python Notebook (readmission_analysis.ipynb)
 - [x] MySQL connection via python-dotenv
 - [x] Pull readmission rate by DRG query into pandas DataFrame
 - [x] Basic horizontal bar chart - top 20 DRGs
 - [x] Add CMS national benchmark reference line (~15%) to chart
 - [x] Add citation for CMS benchmark rate
-- [ ] Add dataset average as second reference line
-- [ ] Add markdown cells explaining methodology and limitations
-- [ ] Save chart as image file for README
-- [ ] Update README to reference notebook
-- [ ] Resolve additional folder appearing in icloud
+- [x] Add markdown cells explaining methodology and limitations
+- [x] Save chart as image file for README
+- [x] Update README to reference notebook
+
+## In Progress
+
+
+## In Progress - Python Notebook (readmission_analysis.ipynb)
+- [ ] ICD-9 condition mapping (AMI, Heart Failure, Pneumonia, COPD)
+- [ ] Condition-level readmission rates vs HRRP published benchmarks
+- [ ] Add markdown cells to notebook explaining methodology and limitations
+- [ ] Update notebook with savefig before show (done — confirm pushed)
+
+## Planned
+- [ ] BigQuery setup with real CMS Medicare data
+- [ ] Logistic/linear regression readmission prediction model on BigQuery data
+- [ ] Tableau visualization (stretch goal)
+- [ ] Resolve iCloud duplicate folder issue
 
 ## Upcoming
 - [ ] PMPM approximation
