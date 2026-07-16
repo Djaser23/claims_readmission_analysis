@@ -19,8 +19,8 @@
 - [x] MySQL connection via python-dotenv
 - [x] Pull readmission rate by DRG query into pandas DataFrame
 - [x] Basic horizontal bar chart - top 20 DRGs
-- [ ] Add CMS national benchmark reference line (~15%) to chart
-- [ ] Add citation for CMS benchmark rate
+- [x] Add CMS national benchmark reference line (~15%) to chart
+- [x] Add citation for CMS benchmark rate
 - [ ] Add dataset average as second reference line
 - [ ] Add markdown cells explaining methodology and limitations
 - [ ] Save chart as image file for README
