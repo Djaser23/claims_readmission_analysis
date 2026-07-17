@@ -1,5 +1,5 @@
 -- Row-level length of stay calculation, exploratory
--- Week 1 | CMS DE-SynPUF Inpatient Claims Sample 1
+-- CMS DE-SynPUF Inpatient Claims lenth of stay 
 
 SELECT 
   DESYNPUF_ID,
