@@ -50,10 +50,9 @@ THEN 'thirty_day_readmission' ELSE 'non_readmission' END AS readmission_class
 FROM CTE2 )
 
 
-
 SELECT 
 	CLM_DRG_CD, 
-	ROUND(AVG(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1.0 ELSE 0 END),2) AS readmission_rate,
+	ROUND(AVG(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1.0 ELSE 0 END),3) AS readmission_rate,
     COUNT(*) AS total_admissions
 FROM CTE3
 GROUP BY CLM_DRG_CD
