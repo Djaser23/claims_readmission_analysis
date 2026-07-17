@@ -35,7 +35,7 @@ low-volume and censored discharges are handled correctly?
 - **Readmission flagging:** LEAD() window functions over per-patient
   discharge sequences (CTE-structured), computed two ways — including and
   excluding 1-day gaps — with the tradeoffs documented in query comments
-- **Censoring correction:** Excluded [324] discharges (0.49%) within 30
+- **Censoring correction:** Excluded 324 discharges (0.49%) within 30
   days of the observation window end, since their readmission status is
   unobservable; naive inclusion understates the true rate
 - **Statistical reliability filter:** DRGs retained only where n×p ≥ 10 and
@@ -43,40 +43,56 @@ low-volume and censored discharges are handled correctly?
   low-volume diagnosis groups
 - **Rate calculation:** Conditional aggregation (AVG of CASE WHEN) by DRG
 
+## Data Quality
+
+All data decisions are documented in [`data_quality_log.md`](data_quality_log.md),
+including handling of dates stored as YYYYMMDD strings, blank deductible
+amounts (3.26% loaded as 0), and blank utilization day counts (3.5%
+loaded as 0), with the reasoning for each decision.
+
+## Limitations
+
+- DE-SynPUF is synthetic: distributions approximate real Medicare claims
+  but individual-level patterns are artificial; rates here characterize
+  the method, not the true population
+- Dates stored as YYYYMMDD strings, not DATE type. Requires STR_TO_DATE() conversion before any date math. 
+- Readmission defined as any-cause inpatient return within 30 days; no
+  transfer or planned-readmission exclusions (unlike CMS HRRP methodology)
 
 
 ## Data Source
 
 CMS 2008-2010 DE-SynPUF synthetic Medicare claims files. 66,773 inpatient claims rows loaded (Sample 1).
 
+
 **File Names:**
 - DE1_0_2008_to_2010_Inpatient_Claims_Sample_1.csv
 - DE1_0_2008_to_2010_Outpatient_Claims_Sample_1.csv
+
+
+## Repository Structure
+
+- `queries/` — SQL for table setup, data quality checks, and analysis
+- `analysis/` — Jupyter notebooks pulling SQL results for visualization
+  (`readmission_analysis.ipynb`)
+- `data_quality_log.md` — running log of findings and decisions
+- `images/` — exported figures
 
 
 **Source:** 
 https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf
 
 
-## Project Structure
-- `queries/` — SQL scripts for data setup, quality checks, and analysis
-- `data_quality_log.md` — running log of data quality findings
-- `analysis/` - folder for ipynb files with continued analysis and visualization
+## Roadmap
 
+- ICD-9 → HRRP condition mapping (AMI, HF, pneumonia, COPD, CABG, THA/TKA)
+  with condition-level benchmark comparison
+- PMPM approximation and high-utilizer flagging
+- BI dashboard of readmission results
+- BigQuery extension on real CMS public datasets
 
-## Analyses
-- 30 day readmission analysis (2 versions - with and without single day readmissions with discussion of advantages of each approach in comments)
-- `readmission_analysis.ipynb` - Top 20 readmission rates by DRG with national average comparison. 
+## Author
 
-## Preview
-![Top 20 DRGs by 30-Day Readmission Rate](images/top20_drg_readmission_rate.png)
+Douglas Jaser — MS, Data Science (Illinois Institute of Technology)
+github.com/Djaser23
 
-## Tools
-MySQL Workbench
-GitHub
-Python
-pandas
-matplotlib
-
-## Status
-In progress — SQL analysis complete, Python visualization underway, ICD-9 condition mapping and BigQuery extension planned
