@@ -1,4 +1,13 @@
-# Claims Readmission Analysis
+# 30-Day Readmission Analysis — CMS Medicare Claims (DE-SynPUF)
+
+SQL-based analysis of 66,773 Medicare inpatient claims identifying 30-day
+readmission patterns by diagnosis, with data quality auditing, censoring
+correction, and comparison against the national readmission benchmark.
+
+## Key Findings
+
+- Overall 30-day readmission rate: **9.65%** across 66,449 index discharges
+- National all-cause benchmark: **14.67%** (Definitive Healthcare, 2025, sourced from CMS data)
 
 ## Overview
 This project analyzes CMS Medicare claims data to identify readmission patterns and cost utilization opportunities. Using the 2008-2010 DE-SynPUF synthetic inpatient and outpatient claims files, the analysis applies SQL-based methods common in health plan and population health analytics — including length of stay by diagnosis, high-utilizer identification, and 30-day readmission flagging.
