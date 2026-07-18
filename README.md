@@ -90,6 +90,18 @@ https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-
 - BI dashboard of readmission results
 - BigQuery extension on real CMS public datasets
 
+
+## References
+
+Definitive Healthcare. (2025, March). *Average hospital readmission rate by state*. 
+Data originally sourced from CMS. 
+https://www.definitivehc.com/resources/healthcare-insights/average-hospital-readmission-state
+
+Centers for Medicare & Medicaid Services. (n.d.). *Medicare fee-for-service DRG descriptions*. 
+U.S. Department of Health & Human Services. 
+https://www.cms.gov/research-statistics-data-and-systems/statistics-trends-and-reports/medicarefeeforsvcpartsab/downloads/drgdesc19.pdf
+
+
 ## Author
 
 Douglas Jaser — MS, Data Science (Illinois Institute of Technology)
