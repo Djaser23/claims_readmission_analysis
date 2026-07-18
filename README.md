@@ -69,6 +69,9 @@ CMS 2008-2010 DE-SynPUF synthetic Medicare claims files. 66,773 inpatient claims
 - DE1_0_2008_to_2010_Inpatient_Claims_Sample_1.csv
 - DE1_0_2008_to_2010_Outpatient_Claims_Sample_1.csv
 
+**Data Source:** 
+https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf
+
 
 ## Repository Structure
 
@@ -77,10 +80,6 @@ CMS 2008-2010 DE-SynPUF synthetic Medicare claims files. 66,773 inpatient claims
   (`readmission_analysis.ipynb`)
 - `data_quality_log.md` — running log of findings and decisions
 - `images/` — exported figures
-
-
-**Source:** 
-https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files/cms-2008-2010-data-entrepreneurs-synthetic-public-use-file-de-synpuf
 
 
 ## Roadmap
