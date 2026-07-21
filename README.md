@@ -1,8 +1,13 @@
 # 30-Day Readmission Analysis — CMS Medicare Claims (DE-SynPUF)
 
-SQL-based analysis of 66,773 Medicare inpatient claims identifying 30-day
-readmission patterns by diagnosis, with data quality auditing, censoring
-correction, and comparison against the national readmission benchmark.
+SQL-based analysis of 66,773 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against the national readmission benchmark.
+
+## Research Questions
+
+Which diagnosis groups drive 30-day readmissions in this Medicare
+population, and how do their rates compare to the national benchmark once low-volume and censored discharges are handled correctly?
+
+How do the readmission rates of the target Hospital Readmissions Reduction Program (HRRP) conditions/procedures within this dataset compare to national averages?
 
 ## Key Findings
 
@@ -17,17 +22,21 @@ correction, and comparison against the national readmission benchmark.
   
 - Notable: the highest-rate DRGs span hematologic, urologic, orthopedic, 
   immunologic, and neurologic conditions — no cardiac DRGs appear in the 
-  top 5, despite cardiac conditions being the primary focus of CMS HRRP 
-  readmission reduction programs.
+  top 5, despite cardiac conditions being the primary focus of CMS HRRP readmission reduction programs.
+
+-All diagnosis based HRRP conditions have readmission rates significantly lower than published baselines. 
+| Condition | Cited Readmission Rate | DE-SynPUF rate | Difference |
+|-----------|------------------------|----------------|------------|
+| Heart Failure | 24.8 | 11.0 | -13.8 | 
+| Pneumonia | 16.4 | 10.6 | -5.8 |
+| COPD | 20.8 | 9.5 | -11.3 |
+| AMI | 15.6 | 9.4 | -6.2 |
+*Observed rates are crude (unadjusted); national benchmarks are risk-standardized. Synthetic data limitations apply — see Limitations section.*
+
 
 ![Top 20 DRGs by 30-Day Readmission Rate](images/top20_drg_readmission_rate.png)  
 
-
-## Research Question
-
-Which diagnosis groups drive 30-day readmissions in this Medicare
-population, and how do their rates compare to the national benchmark once
-low-volume and censored discharges are handled correctly?
+![HRRP Condition Readmission Rates vs National Benchmarks](images/hrrp_condition_benchmark_comparison.png)
 
 
 ## Methods
@@ -42,6 +51,13 @@ low-volume and censored discharges are handled correctly?
   n×(1−p) ≥ 10 (CLT proportions check), preventing unstable rates from
   low-volume diagnosis groups
 - **Rate calculation:** Conditional aggregation (AVG of CASE WHEN) by DRG
+
+
+## Analyses
+- 30-day readmission analysis (2 versions — with and without single day readmissions, with discussion of tradeoffs in query comments)
+- `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with national average comparison
+- `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates substantially below benchmarks, consistent with synthetic data limitations.
+
 
 ## Data Quality
 
@@ -83,9 +99,7 @@ https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-
 
 
 ## Roadmap
-
-- ICD-9 → HRRP condition mapping (AMI, HF, pneumonia, COPD, CABG, THA/TKA)
-  with condition-level benchmark comparison
+- CABG and THA/TKA condition mapping via procedure codes (ICD-9 PRCDR fields)
 - PMPM approximation and high-utilizer flagging
 - BI dashboard of readmission results
 - BigQuery extension on real CMS public datasets
@@ -101,6 +115,13 @@ Centers for Medicare & Medicaid Services. (n.d.). *Medicare fee-for-service DRG 
 U.S. Department of Health & Human Services. 
 https://www.cms.gov/research-statistics-data-and-systems/statistics-trends-and-reports/medicarefeeforsvcpartsab/downloads/drgdesc19.pdf
 
+
+Centers for Medicare & Medicaid Services. (n.d.). *Hospital Readmissions Reduction Program (HRRP)*. U.S. Department of Health & Human Services. https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions
+
+Rachoin, J.-S., Hunter, K., Varallo, J., & Cerceo, E. (2024). Impact of time 
+from discharge to readmission on outcomes: an observational study from the US 
+National Readmission Database. *BMJ Open, 14*(8), e085466. 
+https://doi.org/10.1136/bmjopen-2024-085466
 
 ## Author
 
