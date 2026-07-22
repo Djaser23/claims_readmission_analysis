@@ -26,13 +26,14 @@
 
 ## In Progress - Python Notebook (readmission_analysis.ipynb)
 - [ ] ICD-9 condition mapping (AMI, Heart Failure, Pneumonia, COPD)
-- [ ] Condition-level readmission rates vs HRRP published benchmarks
+- [ ] Condition-level readmission rates vs HRRP published benchmarks (because synthetic data on ICD-9 is so much lower than national averages I will pass on this part of the analysis)
 - [ ] Add markdown cells to notebook explaining methodology and limitations
 - [ ] Update notebook with savefig before show (done — confirm pushed)
 
 ## Planned
 - [ ] BigQuery setup with real CMS Medicare data
 - [ ] Logistic/linear regression readmission prediction model on BigQuery data
+- [ ] Logistic/linear regression High-utilizer prediction model on BigQuery data
 - [ ] Tableau visualization (stretch goal)
 - [ ] Resolve iCloud duplicate folder issue
 

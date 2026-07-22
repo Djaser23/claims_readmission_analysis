@@ -74,6 +74,7 @@ loaded as 0), with the reasoning for each decision.
 - Dates stored as YYYYMMDD strings, not DATE type. Requires STR_TO_DATE() conversion before any date math. 
 - Readmission defined as any-cause inpatient return within 30 days; no
   transfer or planned-readmission exclusions (unlike CMS HRRP methodology)
+- Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.  
 
 
 ## Data Source

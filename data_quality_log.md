@@ -14,3 +14,6 @@ Decision: treat as 0 for now. REVISIT: decide whether 0 vs NULL affects utilizat
 - Known limitation: Data censoring due to discharge dates within the last 30 days in the dataset preclude the possibility of having a 30 day readmission for those DRG claims. 
 - Decision: Create a filter using a CTE to remove that subset of data to get accurate readmission rates
 -324 discharges (0.49%) fell within 30 days of the observation window end date (2010-12-31) and were excluded from readmission rate calculations due to censoring. Minimal impact on analysis. Note: date fields stored as YYYYMMDD strings — STR_TO_DATE() required for all date math.
+- Results of query 13_high_utilizer_flagging reveal that the multiple diagnosis and procedure codes do not 
+contain believable clinical patterns. The results appear to be a random data artifact of the synthetic data creation process.
+- Decision: acknowledge and suggest that predictive modeling using multiple diagnosis-procedure codes should be limited to real claims data such as available on BigQuery. 
