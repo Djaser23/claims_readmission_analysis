@@ -1,3 +1,16 @@
+/*
+This query is designed to calculate the highest service utilizers
+by count of claims per year. It returns the top five percent of all members 
+in that cohort with all of their claims, diagnosis codes, and procedure codes
+for the three years of full claims data (2008-2010)
+Potential next steps include calculating percentages of diagnosis and procedure 
+codes within the sample and eventually using these in a predictive model
+for additional clinical screening insights.
+
+A variation of the query providing only the first diagnosis and procedure code
+will be created as well to complement the analysis
+*/
+
 
 -- first cte filters out the partial year data from 2007
 WITH full_years AS (
@@ -24,15 +37,24 @@ PERCENT_RANK() OVER (PARTITION BY claim_year ORDER BY claims_per_year)
 AS percentile_claims_ranking
 FROM member_claims_per_yr)
 
+/*
+fourth cte creates a table with diagnosis and procedure codes to join
+with main query on patient id (DESYNPUF_ID) and claim year
+*/
+, inpatient_cte AS (
+SELECT LEFT(CLM_FROM_DT, 4) AS claim_year, DESYNPUF_ID, ICD9_DGNS_CD_1, 
+ICD9_PRCDR_CD_1
+FROM inpatient_claims )
 
-SELECT LEFT(CLM_FROM_DT, 4) AS claim_year, ICD9_DGNS_CD_1, 
-ic.ICD9_PRCDR_CD_1
-FROM inpatient_claims 
-
--- SELECT ps.claim_year, ps.DESYNPUF_ID, ps.claims_per_year,
--- ps.percentile_claims_ranking,
--- ic.ICD9_DGNS_CD_1, ic.ICD9_PRCDR_CD_1
--- FROM percentile_rankings ps
--- JOIN inpatient_claims ic 
--- WHERE percentile_claims_ranking >= 0.95
--- ORDER BY claim_year, percentile_claims_ranking DESC
+/*
+final query utilizes a join to view the diagnosis and procedure codes of 
+the highest 5% of utilizers as measured by claims per year
+*/
+SELECT ps.claim_year, ps.DESYNPUF_ID, ps.claims_per_year,
+ps.percentile_claims_ranking,
+ic.ICD9_DGNS_CD_1, ic.ICD9_PRCDR_CD_1
+FROM percentile_rankings ps
+JOIN inpatient_cte ic ON ic.claim_year = ps.claim_year AND
+ic.DESYNPUF_ID = ps.DESYNPUF_ID
+WHERE percentile_claims_ranking >= 0.95
+ORDER BY claim_year, percentile_claims_ranking DESC
