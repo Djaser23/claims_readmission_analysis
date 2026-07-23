@@ -33,6 +33,15 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
 | AMI | 15.6 | 9.4 | -6.2 |
 *Observed rates are crude (unadjusted); national benchmarks are risk-standardized. Synthetic data limitations apply — see Limitations section.*
 
+## Decision Implications
+
+If applied to real claims data, this analysis would enable:
+- Care management targeting — high-utilizer flagging identifies the top 5% of members by admission count, enabling health plans to prioritize outreach and case management resources toward the highest-cost patients
+- Readmission prevention — 30-day readmission rates by DRG and HRRP condition identify which diagnosis groups carry disproportionate readmission risk, informing discharge planning and post-acute follow-up protocols
+- PMPM trend monitoring — year-over-year PMPM approximation provides a baseline for tracking whether interventions reduce per-member costs over time
+Note: These implications are directional only — DE-SynPUF synthetic data does not support production-level conclusions. V2 on real CMS Medicare data via BigQuery is planned.
+- HRRP Benchmark monitoring: Tracking of CMS Hospital Readmissions Reduction Program (HRRP) marked diagnosis codes against published rates informing how the cohort is performing against the known population.
+
 
 ![Top 20 DRGs by 30-Day Readmission Rate](images/top20_drg_readmission_rate.png)  
 
