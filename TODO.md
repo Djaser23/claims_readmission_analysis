@@ -20,29 +20,33 @@
 - [x] Add markdown cells explaining methodology and limitations
 - [x] Save chart as image file for README
 - [x] Update README to reference notebook
+- [x] ICD-9 condition mapping (AMI, Heart Failure, Pneumonia, COPD)
+- [x] Condition-level readmission rates vs HRRP published benchmarks (because synthetic data on ICD-9 is so much lower than national averages I will pass on this part of the analysis)
+- [x] Update notebook with savefig before show 
+- [x] PMPM approximation
+- [x] High-utilizer flagging
 
 ## In Progress
 
 
 ## In Progress - Python Notebook (readmission_analysis.ipynb)
-- [ ] ICD-9 condition mapping (AMI, Heart Failure, Pneumonia, COPD)
-- [ ] Condition-level readmission rates vs HRRP published benchmarks (because synthetic data on ICD-9 is so much lower than national averages I will pass on this part of the analysis)
+
 - [ ] Add markdown cells to notebook explaining methodology and limitations
-- [ ] Update notebook with savefig before show (done — confirm pushed)
+
 
 ## Planned
 - [ ] BigQuery setup with real CMS Medicare data
 - [ ] Logistic/linear regression readmission prediction model on BigQuery data
-- [ ] Logistic/linear regression High-utilizer prediction model on BigQuery data
+- [ ] Logistic/linear regression High-utilizer prediction model on BigQuery data (diagnosis and procedure coding)
 - [ ] Tableau visualization (stretch goal)
 - [ ] Resolve iCloud duplicate folder issue
 
+
 ## Upcoming
-- [ ] PMPM approximation
-- [ ] High-utilizer flagging
+
 - [ ] Polish and document final analyses
 - [ ] Update README Analyses section
-- [ ] Add Tableau visualization (stretch goal)
+- [ ] Add Tableau visualization 
 
 ## Known Data Limitations
 - Synthetic data — patterns may not reflect real Medicare population
