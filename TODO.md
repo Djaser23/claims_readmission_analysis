@@ -25,20 +25,18 @@
 - [x] Update notebook with savefig before show 
 - [x] PMPM approximation
 - [x] High-utilizer flagging
+- [x] Add markdown cells to notebook explaining methodology and limitations
 
 ## In Progress
 
 
-## In Progress - Python Notebook (readmission_analysis.ipynb)
 
-- [ ] Add markdown cells to notebook explaining methodology and limitations
-
-
-## Planned
+## Planned for Version 2
 - [ ] BigQuery setup with real CMS Medicare data
 - [ ] Logistic/linear regression readmission prediction model on BigQuery data
 - [ ] Logistic/linear regression High-utilizer prediction model on BigQuery data (diagnosis and procedure coding)
-- [ ] Tableau visualization (stretch goal)
+- [ ] Tableau/PowerBI visualization - heatmap visualization of ICD-9 diagnosis code frequency among high-utilizers
+- [] Run icd-9 frequency analysis - ICD-9 code frequency rates in the top 5% cohort vs.the same rates in the bottom 95% - Compute the ratio or percentage point difference
 - [ ] Resolve iCloud duplicate folder issue
 
 
@@ -46,7 +44,7 @@
 
 - [ ] Polish and document final analyses
 - [ ] Update README Analyses section
-- [ ] Add Tableau visualization 
+- [ ] Add Tableau/PowerBI visualization 
 
 ## Known Data Limitations
 - Synthetic data — patterns may not reflect real Medicare population
