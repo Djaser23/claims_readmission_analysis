@@ -38,7 +38,7 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
 If applied to real claims data, this analysis would enable:
 - Care management targeting — high-utilizer flagging identifies the top 5% of members by admission count, enabling health plans to prioritize outreach and case management resources toward the highest-cost patients
 - Readmission prevention — 30-day readmission rates by DRG and HRRP condition identify which diagnosis groups carry disproportionate readmission risk, informing discharge planning and post-acute follow-up protocols
-- PMPM trend monitoring — year-over-year PMPM approximation provides a baseline for tracking whether interventions reduce per-member costs over time
+- Cost trend monitoring — year-over-year average inpatient cost per admitted patient provides a baseline for tracking spend trends over time. Note: this is not a true PMPM (per-member-per-month) metric — DE-SynPUF lacks enrollment/eligibility data needed to build a full member-months denominator; see Limitations.
 Note: These implications are directional only — DE-SynPUF synthetic data does not support production-level conclusions. V2 on real CMS Medicare data via BigQuery is planned.
 - HRRP Benchmark monitoring: Tracking of CMS Hospital Readmissions Reduction Program (HRRP) marked diagnosis codes against published rates informing how the cohort is performing against the known population.
 
@@ -66,6 +66,7 @@ Note: These implications are directional only — DE-SynPUF synthetic data does 
 - 30-day readmission analysis (2 versions — with and without single day readmissions, with discussion of tradeoffs in query comments)
 - `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with national average comparison
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates substantially below benchmarks, consistent with synthetic data limitations.
+- `12_pmpm_analysis.sql` — average monthly inpatient cost per admitted patient by year (not a true PMPM — see Limitations)
 
 
 ## Data Quality
@@ -83,7 +84,8 @@ loaded as 0), with the reasoning for each decision.
 - Dates stored as YYYYMMDD strings, not DATE type. Requires STR_TO_DATE() conversion before any date math. 
 - Readmission defined as any-cause inpatient return within 30 days; no
   transfer or planned-readmission exclusions (unlike CMS HRRP methodology)
-- Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.  
+- Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.
+- Average monthly inpatient cost per admitted patient is reported in place of true PMPM — DE-SynPUF's inpatient/outpatient claims files don't include enrollment/eligibility data, so a true member-months denominator (which would include zero-claim enrolled members) isn't available from this data alone.  
 
 
 ## Data Source
@@ -102,15 +104,15 @@ https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-
 ## Repository Structure
 
 - `queries/` — SQL for table setup, data quality checks, and analysis
-- `analysis/` — Jupyter notebooks pulling SQL results for visualization
+- `notebooks/` — Jupyter notebooks pulling SQL results for visualization
   (`readmission_analysis.ipynb`)
 - `data_quality_log.md` — running log of findings and decisions
 - `images/` — exported figures
 
 
 ## Roadmap
+- True PMPM via Beneficiary Summary file join (member-months enrollment denominator)
 - CABG and THA/TKA condition mapping via procedure codes (ICD-9 PRCDR fields)
-- PMPM approximation and high-utilizer flagging
 - BI dashboard of readmission results
 - BigQuery extension on real CMS public datasets
 

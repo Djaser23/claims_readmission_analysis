@@ -15,6 +15,17 @@ FROM inpatient_claims;
 Result: 2007-11-27 to 2010-12-31
 Decision: Filter to 2008-2010 only — 2007 contains only ~5 weeks of claims
 and cannot be treated as a full year for PMPM calculation.
+
+NOTE: This is NOT a true PMPM calculation. A standard PMPM divides total 
+cost by member-months of enrollment across ALL eligible members:
+  PMPM = (total cost across all members) / (member-months of enrollment)
+DE-SynPUF does not include enrollment/eligibility data in this load, so a 
+true member-months denominator isn't available. This query instead computes:
+  average annual inpatient cost per admitted patient ÷ 12
+This will run substantially higher than a true PMPM, since the denominator 
+here excludes enrolled members with zero inpatient claims in a given year.
+TODO: join Beneficiary Summary file (BENE_HI_CVRAGE_TOT_MOS) for a true 
+member-months denominator — see Roadmap.
 */
 
 
