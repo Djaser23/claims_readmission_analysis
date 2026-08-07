@@ -11,7 +11,7 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
 
 ## Key Findings
 
-- Overall 30-day readmission rate: **9.65%** across 66,449 index discharges
+- Overall 30-day readmission rate: **9.67%** across 66,449 index discharges
 - National all-cause benchmark: **14.67%** (Definitive Healthcare, 2025, sourced from CMS data)
 - Highest readmission rates: 
 **Coagulation Disorders (DRG 813)** at 22.8%, 

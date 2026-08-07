@@ -12,13 +12,16 @@ FROM inpatient_claims)
 
 
 ,CTE2 AS (
-SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ADMTNG_ICD9_DGNS_CD,
-LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
-FROM inpatient_claims
-WHERE STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d') < (SELECT adj_max_discharge 
-FROM censored_data_filter)
+  SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ADMTNG_ICD9_DGNS_CD,
+  LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
+  FROM inpatient_claims
+ 
 )
-
+,CTE2_filtered AS (
+  SELECT * FROM CTE2
+  WHERE STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d') < (SELECT adj_max_discharge 
+  FROM censored_data_filter)
+)
 
 ,CTE3 AS (
 SELECT 
@@ -27,7 +30,7 @@ CASE WHEN DATEDIFF(STR_TO_DATE(next_admission, '%Y%m%d'), STR_TO_DATE(NCH_BENE_D
 AND 
 DATEDIFF(STR_TO_DATE(next_admission, '%Y%m%d'), STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d')) > 0
 THEN 'thirty_day_readmission' ELSE 'non_readmission' END AS readmission_class 
-FROM CTE2 )
+FROM CTE2_filtered )
 
 
 SELECT 
