@@ -19,12 +19,17 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
 **Hand or Wrist Proc, Except Major Thumb or Joint Proc w CC/MCC (DRG 513)** at 18.8%,
 **Reticuloendothelial & Immunity Disorders (DRG 815)** at 18.6%, and 
 **Extracranial Procedures w MCC (DRG 037)** at 18.2%
+- Note: Given small DRG-level sample sizes (n=57-80 for top-ranked DRGs),
+  95% confidence intervals for all top 5 DRGs overlap the national
+  benchmark (14.67%) — meaning none are statistically distinguishable
+  from the national average at this sample size. See uncertainty
+  quantification in Methods.
   
 - Notable: the highest-rate DRGs span hematologic, urologic, orthopedic, 
   immunologic, and neurologic conditions — no cardiac DRGs appear in the 
   top 5, despite cardiac conditions being the primary focus of CMS HRRP readmission reduction programs.
 
--All diagnosis based HRRP conditions have readmission rates significantly lower than published baselines. 
+- All diagnosis based HRRP conditions have readmission rates significantly lower than published baselines. 
 | Condition | Cited Readmission Rate | DE-SynPUF rate | Difference |
 |-----------|------------------------|----------------|------------|
 | Heart Failure | 24.8 | 11.0 | -13.8 | 
@@ -60,11 +65,17 @@ Note: These implications are directional only — DE-SynPUF synthetic data does 
   n×(1−p) ≥ 10 (CLT proportions check), preventing unstable rates from
   low-volume diagnosis groups
 - **Rate calculation:** Conditional aggregation (AVG of CASE WHEN) by DRG
+- **Uncertainty quantification:** 95% Wilson confidence intervals computed
+  for each DRG's readmission rate (statsmodels.stats.proportion_confint),
+  since point estimates alone can't distinguish a real difference from
+  sampling noise — especially at the small-n end of DRGs passing the
+  CLT filter
 
 
 ## Analyses
 - 30-day readmission analysis (2 versions — with and without single day readmissions, with discussion of tradeoffs in query comments)
-- `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with national average comparison
+- `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95%
+  Wilson confidence intervals and national average comparison
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates substantially below benchmarks, consistent with synthetic data limitations.
 - `12_pmpm_analysis.sql` — average monthly inpatient cost per admitted patient by year (not a true PMPM — see Limitations)
 
