@@ -31,7 +31,7 @@ FROM inpatient_claims)
 SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ADMTNG_ICD9_DGNS_CD,
 LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
 FROM inpatient_claims
-WHERE NCH_BENE_DSCHRG_DT < (SELECT adj_max_discharge  
+WHERE STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d') < (SELECT adj_max_discharge 
 FROM censored_data_filter)
 )
 
