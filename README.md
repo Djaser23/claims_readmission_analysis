@@ -31,22 +31,22 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
 
 All diagnosis based HRRP conditions have readmission rates significantly lower than published baselines.
 
-| Condition | Cited Readmission Rate | DE-SynPUF rate | Difference |
+| Condition | Cited Readmission Rate | DE-SynPUF rate | Difference (pp) |
 |-----------|------------------------|----------------|------------|
-| Heart Failure | 24.8 | 11.0 | -13.8 |
-| Pneumonia | 16.4 | 10.6 | -5.8 |
-| COPD | 20.8 | 9.5 | -11.3 |
-| AMI | 15.6 | 9.4 | -6.2 |
+| Heart Failure | 24.8% | 11.0% | -13.8 |
+| Pneumonia | 16.4% | 10.6% | -5.8 |
+| COPD | 20.8% | 9.5% | -11.3 |
+| AMI | 15.6% | 9.4% | -6.2 |
 
 *Observed rates are crude (unadjusted); national benchmarks are risk-standardized. Synthetic data limitations apply — see Limitations section.*
 
 ## Decision Implications
+**Note: These implications are directional only — DE-SynPUF synthetic data does not support production-level conclusions. V2 on real CMS Medicare data via BigQuery is planned.**
 
 If applied to real claims data, this analysis would enable:
 - Care management targeting — high-utilizer flagging identifies the top 5% of members by admission count, enabling health plans to prioritize outreach and case management resources toward the highest-cost patients
 - Readmission prevention — 30-day readmission rates by DRG and HRRP condition identify which diagnosis groups carry disproportionate readmission risk, informing discharge planning and post-acute follow-up protocols
 - Cost trend monitoring — year-over-year average inpatient cost per admitted patient provides a baseline for tracking spend trends over time. Note: this is not a true PMPM (per-member-per-month) metric — DE-SynPUF lacks enrollment/eligibility data needed to build a full member-months denominator; see Limitations.
-Note: These implications are directional only — DE-SynPUF synthetic data does not support production-level conclusions. V2 on real CMS Medicare data via BigQuery is planned.
 - HRRP Benchmark monitoring: Tracking of CMS Hospital Readmissions Reduction Program (HRRP) marked diagnosis codes against published rates informing how the cohort is performing against the known population.
 
 
@@ -119,7 +119,7 @@ https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-
 
 - `queries/` — SQL for table setup, data quality checks, and analysis
 - `notebooks/` — Jupyter notebooks pulling SQL results for visualization
-  (`readmission_analysis.ipynb`)
+  (`readmission_analysis.ipynb`, `hrrp_condition_readmission_analysis.ipynb`)
 - `data_quality_log.md` — running log of findings and decisions
 - `images/` — exported figures
 
