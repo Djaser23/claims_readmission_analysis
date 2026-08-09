@@ -29,13 +29,15 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
   immunologic, and neurologic conditions — no cardiac DRGs appear in the 
   top 5, despite cardiac conditions being the primary focus of CMS HRRP readmission reduction programs.
 
-- All diagnosis based HRRP conditions have readmission rates significantly lower than published baselines. 
+All diagnosis based HRRP conditions have readmission rates significantly lower than published baselines.
+
 | Condition | Cited Readmission Rate | DE-SynPUF rate | Difference |
 |-----------|------------------------|----------------|------------|
-| Heart Failure | 24.8 | 11.0 | -13.8 | 
+| Heart Failure | 24.8 | 11.0 | -13.8 |
 | Pneumonia | 16.4 | 10.6 | -5.8 |
 | COPD | 20.8 | 9.5 | -11.3 |
 | AMI | 15.6 | 9.4 | -6.2 |
+
 *Observed rates are crude (unadjusted); national benchmarks are risk-standardized. Synthetic data limitations apply — see Limitations section.*
 
 ## Decision Implications
