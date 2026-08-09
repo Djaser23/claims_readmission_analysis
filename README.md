@@ -1,6 +1,6 @@
 # 30-Day Readmission Analysis — CMS Medicare Claims (DE-SynPUF)
 
-SQL-based analysis of 66,773 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against the national readmission benchmark.
+SQL-based analysis of 66,773 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against a national readmission benchmark.
 
 ## Research Questions
 
@@ -12,7 +12,7 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
 ## Key Findings
 
 - Overall 30-day readmission rate: **9.67%** across 66,449 index discharges
-- National all-cause benchmark: **14.67%** (Definitive Healthcare, 2025, sourced from CMS data)
+- National all-cause benchmark: **14.67%** (Definitive Healthcare, 2025; sampling methodology not disclosed — see Limitations)
 - Highest readmission rates: 
 **Coagulation Disorders (DRG 813)** at 22.8%, 
 **Prostatectomy with MCC (DRG 665)** at 19.5%,
@@ -95,6 +95,7 @@ loaded as 0), with the reasoning for each decision.
 - Dates stored as YYYYMMDD strings, not DATE type. Requires STR_TO_DATE() conversion before any date math. 
 - Readmission defined as any-cause inpatient return within 30 days; no
   transfer or planned-readmission exclusions (unlike CMS HRRP methodology)
+- National benchmark (Definitive Healthcare, 2025) is drawn from a subset (4,100 of ~9,000 US hospitals) in a commercial dataset; the source article does not describe the sampling methodology, so geographic or other representativeness cannot be confirmed.  
 - Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.
 - Average monthly inpatient cost per admitted patient is reported in place of true PMPM — DE-SynPUF's inpatient/outpatient claims files don't include enrollment/eligibility data, so a true member-months denominator (which would include zero-claim enrolled members) isn't available from this data alone.  
 
