@@ -75,7 +75,21 @@ If applied to real claims data, this analysis would enable:
 
 
 ## Analyses
-- 30-day readmission analysis (2 versions — with and without single day readmissions, with discussion of tradeoffs in query comments)
+
+- `05_patient_readmission_analysis.sql` — 30-day readmission flagging, computed
+  2 ways (with and without single-day gaps); tradeoffs discussed in query comments
+- `06_readmission_by_drg.sql` — Readmission rates by DRG (single-day gaps
+  included); statistical reliability filter applied (n×p ≥ 10)
+- `07_censoring_analysis.sql` — Quantifies censored discharges (324, 0.49%)
+  near the observation window end
+- `08_overall_readmission_rate.sql` — Overall 30-day readmission rate (9.67%,
+  single-day gaps included) across index discharges
+- `09_icd9_frequency_by_hrrp_condition.sql` (validates ICD-9-to-condition
+  mapping logic, 50-row preview) / `11_hrrp_condition_readmission_rates.sql` —
+  applies the mapping across the full dataset and computes readmission rates
+  for 4 HRRP conditions vs. national benchmarks
+- `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` —
+  Top 5% utilizer flagging by claims volume, full and first-claim-only variants
 - `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95%
   Wilson confidence intervals and national average comparison
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates substantially below benchmarks, consistent with synthetic data limitations.
