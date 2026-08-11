@@ -113,7 +113,8 @@ loaded as 0), with the reasoning for each decision.
   transfer or planned-readmission exclusions (unlike CMS HRRP methodology)
 - National benchmark (Definitive Healthcare, 2025) is drawn from a subset (4,100 of ~9,000 US hospitals) in a commercial dataset; the source article does not describe the sampling methodology, so geographic or other representativeness cannot be confirmed.  
 - Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.
-- Average monthly inpatient cost per admitted patient is reported in place of true PMPM — DE-SynPUF's inpatient/outpatient claims files don't include enrollment/eligibility data, so a true member-months denominator (which would include zero-claim enrolled members) isn't available from this data alone.  
+- Average monthly inpatient cost per admitted patient is reported in place of true PMPM — DE-SynPUF's inpatient/outpatient claims files don't include enrollment/eligibility data, so a true member-months denominator (which would include zero-claim enrolled members) isn't available from this data alone. 
+- The high-utilizer flagging filter (PERCENT_RANK() >= 0.95) does not reliably select the top 5% of members due to tied claim counts at the percentile boundary — validated selection was 1.8–3.0% across 2008–2010, not 5%. Results should be read as "highest-volume utilizers" rather than a precise top-5% cohort until the underlying query is corrected. 
 
 
 ## Data Source
