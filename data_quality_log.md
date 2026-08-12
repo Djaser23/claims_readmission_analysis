@@ -22,3 +22,10 @@
 - Fix: moved the filter to run *after* LEAD() computes `next_admission`, so the window function sees the full unfiltered admission sequence before censoring is applied.
 - Impact: recovered 11 previously-missed readmissions (6,412 → 6,423), shifting the overall 30-day readmission rate from 9.65% to 9.67% (of 66,449 index discharges).
 - Applied to: `06_readmission_by_drg.sql`, `08_overall_readmission_rate.sql`, `10_readmission_rate_by_icd9.sql`, `11_hrrp_condition_readmission_rates.sql`.
+
+## High-utilizer flagging filter Bug Fix - 08/12/26
+- Bug: Determined percentages were not coming back at five percent as anticipated, returned 2.9%, 1.8%, and 2.01% for 2008-2010 instead of the intended five percent, issue with using PERCENT_RANK() window function and not accounting for patients with the same number of claims per year. 
+- Fix: Reworked query using ROW_NUMBER() instead of PERCENT_RANK() and using CEILING() to calculate top five percent cutoff, created validation query, verified five percent for years two thousand eight, nine, and two thousand ten. 
+- Impact: Query now results in 5.01%, 5.00%, 5.00% for 2008-2010. Ties at the cutoff boundary broken by patient ID, meaning members with identical claim counts near the threshold may be arbitrarily included or excluded.
+- Applied to `13a_high_utilizer_flagging`, `13a_high_utilizer_flagging_validation`,
+`13b_high_utilizer_first_claim`

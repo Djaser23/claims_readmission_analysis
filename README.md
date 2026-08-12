@@ -88,8 +88,7 @@ If applied to real claims data, this analysis would enable:
   mapping logic, 50-row preview) / `11_hrrp_condition_readmission_rates.sql` —
   applies the mapping across the full dataset and computes readmission rates
   for 4 HRRP conditions vs. national benchmarks
-- `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` —
-  Top 5% utilizer flagging by claims volume, full and first-claim-only variants
+- `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` — Top 5% utilizer flagging by claims volume, full and first-claim-only variants (validated in `13a_high_utilizer_flagging_validation.sql`)  
 - `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95%
   Wilson confidence intervals and national average comparison
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates substantially below benchmarks, consistent with synthetic data limitations.
@@ -114,7 +113,8 @@ loaded as 0), with the reasoning for each decision.
 - National benchmark (Definitive Healthcare, 2025) is drawn from a subset (4,100 of ~9,000 US hospitals) in a commercial dataset; the source article does not describe the sampling methodology, so geographic or other representativeness cannot be confirmed.  
 - Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.
 - Average monthly inpatient cost per admitted patient is reported in place of true PMPM — DE-SynPUF's inpatient/outpatient claims files don't include enrollment/eligibility data, so a true member-months denominator (which would include zero-claim enrolled members) isn't available from this data alone. 
-- The high-utilizer flagging filter (PERCENT_RANK() >= 0.95) does not reliably select the top 5% of members due to tied claim counts at the percentile boundary — validated selection was 1.8–3.0% across 2008–2010, not 5%. Results should be read as "highest-volume utilizers" rather than a precise top-5% cohort until the underlying query is corrected. 
+- The high-utilizer flagging filter in files 13a_high_utilizer_flagging and 13b_high_utilizer_first_claim utilizes the ROW_NUMBER() window function instead of PERCENT_RANK() in order to deterministically produce approximately 5% of high utilizers per year. Due to this methodology, ties at the cutoff boundary are broken by patient ID, meaning members with identical claim counts near the threshold may be arbitrarily included or excluded.
+
 
 
 ## Data Source
