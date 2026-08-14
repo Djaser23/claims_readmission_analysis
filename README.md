@@ -75,7 +75,11 @@ If applied to real claims data, this analysis would enable:
 
 
 ## Analyses
-
+- `03a_los_by_drg.sql` / `03b_los_by_drg.sql` — Row-level and DRG-aggregated
+  length of stay (exploratory; not carried into the final narrative)
+- `04_patient_admission_rank.sql` — Whole-period admission ranking by patient
+  (exploratory precursor to the year-partitioned high-utilizer methodology
+  in `13a`/`13b`)
 - `05_patient_readmission_analysis.sql` — 30-day readmission flagging, computed
   2 ways (with and without single-day gaps); tradeoffs discussed in query comments
 - `06_readmission_by_drg.sql` — Readmission rates by DRG (single-day gaps
@@ -88,6 +92,9 @@ If applied to real claims data, this analysis would enable:
   mapping logic, 50-row preview) / `11_hrrp_condition_readmission_rates.sql` —
   applies the mapping across the full dataset and computes readmission rates
   for 4 HRRP conditions vs. national benchmarks
+- `10_readmission_rate_by_icd9.sql` — Readmission rates by admitting ICD-9
+  diagnosis code, same statistical reliability filter as `06` applied at
+  the diagnosis-code level  
 - `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` — Top 5% utilizer flagging by claims volume, full and first-claim-only variants (validated in `13a_high_utilizer_flagging_validation.sql`)  
 - `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95%
   Wilson confidence intervals and national average comparison
