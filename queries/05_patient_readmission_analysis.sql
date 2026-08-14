@@ -2,7 +2,21 @@
 30 Day Readmission Analysis
 Includes single day intervals since discharge
 This may capture planned transfers
+
+
+Verified 08/14/26: totals below (6,423 / 6,131) confirmed live against 
+current queries -- not stale copy-paste from 08_overall_readmission_rate.sql.
+
+Note: 05 has no explicit censoring filter (unlike 06/08/10/11), but its
+Query 2 total matches 08's corrected total exactly. This isn't coincidence:
+05's LEAD() always ran over the full unfiltered admission sequence, so it
+was never subject to the filter-before-LEAD() ordering bug fixed 08/06/26
+in 06/08/10/11. 05's naive approach and 08's corrected censoring filter
+independently arrive at the same count. See data_quality_log.md for the
+bug fix history.
 */
+
+
 WITH CTE AS (
 SELECT DESYNPUF_ID, CLM_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT,
 LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission

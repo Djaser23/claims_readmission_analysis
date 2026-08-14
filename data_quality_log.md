@@ -29,3 +29,15 @@
 - Impact: Query now results in 5.01%, 5.00%, 5.00% for 2008-2010. Ties at the cutoff boundary broken by patient ID, meaning members with identical claim counts near the threshold may be arbitrarily included or excluded.
 - Applied to `13a_high_utilizer_flagging`, `13a_high_utilizer_flagging_validation`,
 `13b_high_utilizer_first_claim`
+
+## Query 05 Total Verification — 08/14/26
+- Audit flagged 05_patient_readmission_analysis.sql's hardcoded totals (6,423 / 6,131) as unverifiable, since the 08/06/26 censoring filter bug fix was applied to 
+  06/08/10/11 but not 05, and 6,423 exactly matches 08's post-fix total.
+- Verified: isolated and reran Query 2 and Query 4 in 05 independently — both totals 
+  (6,423 / 6,131) confirmed live, not stale copy-paste.
+- Explanation: 05 has no censoring filter, so it was never subject to the 
+  filter-before-LEAD() ordering bug that 06/08/10/11 had. 05's naive (uncensored) 
+  approach and 08's corrected censoring filter independently converge on the same 
+  count for this dataset.
+- Decision: no code change needed in 05. Added clarifying comment to the file 
+  documenting the verification and the reason for the match.
