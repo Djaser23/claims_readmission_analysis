@@ -57,6 +57,8 @@ If applied to real claims data, this analysis would enable:
 
 ## Methods
 
+- **Process note:** This analysis began as exploratory work to build
+  familiarity with claims data structure, and the two research questions above emerged from that exploration rather than being specified in advance. Going forward, I plan to state a clear hypothesis before querying, even in early exploratory work.
 - **Readmission flagging:** LEAD() window functions over per-patient
   discharge sequences (CTE-structured), computed two ways — including and
   excluding 1-day gaps — with the tradeoffs documented in query comments
