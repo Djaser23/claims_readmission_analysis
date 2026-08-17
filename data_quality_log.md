@@ -41,3 +41,13 @@
   count for this dataset.
 - Decision: no code change needed in 05. Added clarifying comment to the file 
   documenting the verification and the reason for the match.
+
+## Query 09 & 11 Diagnosis code update — 08/16/26 
+- Replaced admitting diagnosis code (ADMTNG_ICD9_DGNS_CD) with principal discharge 
+  diagnosis code (ICD9_DGNS_CD_1) in queries 09 and 11, per CMS HRRP cohort 
+  methodology (Suter et al., 2014).
+- Recomputing shifted rates by ≤0.5 percentage points across all four conditions; 
+  no substantial change to the overall finding that observed rates fall 
+  substantially below national benchmarks.
+- Decision: updated README HRRP table and Methods section with corrected rates 
+  and field justification; added citation to References.

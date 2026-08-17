@@ -11,12 +11,15 @@ Rates are expressed as percentages. Censoring correction applied — discharges 
 
 2010 national benchmark rates for comparison (BMJ Open, 2024 — PMC11367292):
   Heart Failure: 24.8%
-  COPD:          20.8%
   Pneumonia:     16.4%
+  COPD:          20.8%
   AMI:           15.6%
 
 All four observed rates are substantially lower than national benchmarks, 
 consistent with DE-SynPUF synthetic data producing dampened readmission patterns.
+
+Uses ICD9_DGNS_CD_1 (principal discharge diagnosis) per CMS HRRP cohort 
+methodology (Suter et al., see References) — not ADMTNG_ICD9_DGNS_CD.
 */
 
 
@@ -28,7 +31,7 @@ FROM inpatient_claims)
 
 
 ,CTE2 AS (
-SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ADMTNG_ICD9_DGNS_CD,
+SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ICD9_DGNS_CD_1,
 LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
 FROM inpatient_claims
 )
@@ -41,7 +44,7 @@ FROM inpatient_claims
 
 ,CTE3 AS (
 SELECT 
-ADMTNG_ICD9_DGNS_CD, NCH_BENE_DSCHRG_DT, next_admission, 
+ICD9_DGNS_CD_1, NCH_BENE_DSCHRG_DT, next_admission, 
 CASE WHEN DATEDIFF(STR_TO_DATE(next_admission, '%Y%m%d'), STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d')) <=30 
 AND 
 DATEDIFF(STR_TO_DATE(next_admission, '%Y%m%d'), STR_TO_DATE(NCH_BENE_DSCHRG_DT, '%Y%m%d')) > 0
@@ -52,13 +55,13 @@ FROM CTE2_filtered )
 
 , CTE4 AS (
 SELECT
-ADMTNG_ICD9_DGNS_CD, NCH_BENE_DSCHRG_DT, next_admission, readmission_class, 
-CASE WHEN ADMTNG_ICD9_DGNS_CD LIKE '410%' THEN 'AMI' 
-WHEN ADMTNG_ICD9_DGNS_CD LIKE '428%' THEN 'Heart Failure'
-WHEN ADMTNG_ICD9_DGNS_CD LIKE '486%' THEN 'Pneumonia'
-WHEN ADMTNG_ICD9_DGNS_CD LIKE '491%' 
-  OR ADMTNG_ICD9_DGNS_CD LIKE '492%' 
-  OR ADMTNG_ICD9_DGNS_CD LIKE '496%' THEN 'COPD'
+ICD9_DGNS_CD_1, NCH_BENE_DSCHRG_DT, next_admission, readmission_class, 
+CASE WHEN ICD9_DGNS_CD_1 LIKE '410%' THEN 'AMI' 
+WHEN ICD9_DGNS_CD_1 LIKE '428%' THEN 'Heart Failure'
+WHEN ICD9_DGNS_CD_1 LIKE '486%' THEN 'Pneumonia'
+WHEN ICD9_DGNS_CD_1 LIKE '491%' 
+  OR ICD9_DGNS_CD_1 LIKE '492%' 
+  OR ICD9_DGNS_CD_1 LIKE '496%' THEN 'COPD'
 ELSE NULL END AS mapped_HRRP_diagnosis
 FROM CTE3)
 

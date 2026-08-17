@@ -33,10 +33,10 @@ All diagnosis based HRRP conditions have readmission rates significantly lower t
 
 | Condition | Cited Readmission Rate | DE-SynPUF rate | Difference (pp) |
 |-----------|------------------------|----------------|------------|
-| Heart Failure | 24.8% | 11.0% | -13.8 |
-| Pneumonia | 16.4% | 10.6% | -5.8 |
-| COPD | 20.8% | 9.5% | -11.3 |
-| AMI | 15.6% | 9.4% | -6.2 |
+| Heart Failure | 24.8% | 10.5% | -14.3 |
+| Pneumonia | 16.4% | 10.3% | -6.1 |
+| COPD | 20.8% | 9.8% | -11.0 |
+| AMI | 15.6% | 9.9% | -5.7 |
 
 *Observed rates are crude (unadjusted); national benchmarks are risk-standardized. Synthetic data limitations apply — see Limitations section.*
 
@@ -68,6 +68,8 @@ If applied to real claims data, this analysis would enable:
 - **Statistical reliability filter:** DRGs retained only where n×p ≥ 10 and
   n×(1−p) ≥ 10 (CLT proportions check), preventing unstable rates from
   low-volume diagnosis groups
+- **HRRP condition mapping:** ICD-9 diagnosis codes mapped to condition categories 
+  (AMI, Heart Failure, Pneumonia, COPD) using `ICD9_DGNS_CD_1` (principal discharge diagnosis), consistent with CMS HRRP cohort methodology (Suter et al., 2014 — see References). Rates were originally computed using admitting diagnosis; recomputing with principal diagnosis shifted rates by ≤0.5 percentage points across all four conditions, with no change to the overall finding that observed rates fall substantially below national benchmarks.     
 - **Rate calculation:** Conditional aggregation (AVG of CASE WHEN) by DRG
 - **Uncertainty quantification:** 95% Wilson confidence intervals computed
   for each DRG's readmission rate (statsmodels.stats.proportion_confint),
@@ -172,6 +174,14 @@ Rachoin, J.-S., Hunter, K., Varallo, J., & Cerceo, E. (2024). Impact of time
 from discharge to readmission on outcomes: an observational study from the US 
 National Readmission Database. *BMJ Open, 14*(8), e085466. 
 https://doi.org/10.1136/bmjopen-2024-085466
+
+Suter LG, Li SX, Grady JN, Lin Z, Wang Y, Bhat KR, Turkmani D, Spivack SB, 
+Lindenauer PK, Merrill AR, Drye EE, Krumholz HM, Bernheim SM. National patterns 
+of risk-standardized mortality and readmission after hospitalization for acute 
+myocardial infarction, heart failure, and pneumonia: update on publicly reported 
+outcomes measures based on the 2013 release. J Gen Intern Med. 2014 
+Oct;29(10):1333-40. doi: 10.1007/s11606-014-2862-5. PMID: 24825244; PMCID: PMC4175654.
+
 
 ## Author
 
