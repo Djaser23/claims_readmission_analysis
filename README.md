@@ -40,6 +40,10 @@ All diagnosis based HRRP conditions have readmission rates significantly lower t
 
 *Observed rates are crude (unadjusted); national benchmarks are risk-standardized. Synthetic data limitations apply — see Limitations section.*
 
+## Synthesis: Reconciling DRG-Level and HRRP-Level Findings
+The two headline findings above appear to point in different directions: the top 5 DRGs by readmission rate are non-cardiac (hematologic, urologic, orthopedic, immunologic, neurologic), while the four HRRP-tracked conditions — the specific diagnoses CMS's readmission reduction program is built around — all show observed rates well below national benchmarks. Read at face value, this suggests HRRP's named conditions may not be the actual readmission drivers in this population.
+That reading should be treated as a hypothesis, not a conclusion. The DRG-level result is undercut by its own uncertainty: all five top-DRG 95% confidence intervals overlap the 14.67% national benchmark (see Key Findings), meaning none are statistically distinguishable from average at this sample size (n=57–80). The two comparisons also aren't methodologically aligned — DRG-level rates carry CIs, HRRP-level rates are crude and compared against a risk-standardized benchmark from a different source. Given these limitations and the synthetic nature of the underlying data, this analysis cannot support a confident claim that HRRP's targeted conditions are misaligned with this population's actual readmission risk — only that the pattern is worth checking against real claims data in V2.
+
 ## Decision Implications
 **Note: These implications are directional only — DE-SynPUF synthetic data does not support production-level conclusions. V2 on real CMS Medicare data via BigQuery is planned.**
 
