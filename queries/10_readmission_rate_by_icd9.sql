@@ -3,6 +3,7 @@ Query of readmission rates by diagnosis code
 Ordered by readmission rate desceding
 */
 
+use claims_practice;
 
 WITH censored_data_filter AS (
 SELECT
@@ -36,9 +37,10 @@ FROM CTE2_filtered )
 SELECT 
 	ADMTNG_ICD9_DGNS_CD, 
 	ROUND(AVG(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1.0 ELSE 0 END),3) AS readmission_rate,
+    SUM(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1 ELSE 0 END) AS readmission_count,
     COUNT(*) AS total_admissions
 FROM CTE3
 GROUP BY ADMTNG_ICD9_DGNS_CD
-HAVING readmission_rate * total_admissions >=10 AND -- filters out statistically unreliable rates
-total_admissions * (1 - readmission_rate) >= 10 
+HAVING readmission_count >= 10 AND -- filters out statistically unreliable rates
+total_admissions - readmission_count >= 10
 ORDER BY readmission_rate DESC
