@@ -1,6 +1,21 @@
 /*
-Query of readmission rates by diagnosis code
-Ordered by readmission rate desceding
+Query of readmission rates by admitting diagnosis code 'ADMTNG_ICD9_DGNS_CD'
+Ordered by readmission rate descending
+Admitting diagnosis code has been chosen here as opposed to primary diagnosis code - 'ICD9_DGNS_CD_1'
+due to its clinical accessibility early in the patient onboarding process. This early accessibility
+may offer predictive insights especially when combined with comorbidities and other variables such as
+the primary diagnosis code.
+Note: An earlier version of this query contained a filtering error in the HAVING clause -
+namely
+'HAVING readmission_rate * total_admissions >=10 AND -- filters out statistically unreliable rates
+total_admissions * (1 - readmission_rate) >= 10'
+The original query excluded 7 diagnosis codes that are included in the corrected version, due to a 
+false-negative error in the reliability filter. The fix expands the set of admitting diagnosis codes 
+included in the 30-day readmission results.
+This was due to the fact that the readmission_rate utilized rounding in its construction. The lesson here
+is that any variable feeding into a HAVING or WHERE clause should be in raw count form, not a rounded 
+or derived rate, in order to preserve sufficient statistical accuracy.
+For a more detailed account of the difference in results of these queries see '10_readmission_rate_by_icd9_validation.sql'
 */
 
 use claims_practice;

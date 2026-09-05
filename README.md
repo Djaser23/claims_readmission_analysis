@@ -98,11 +98,10 @@ If applied to real claims data, this analysis would enable:
   single-day gaps included) across index discharges
 - `09_icd9_frequency_by_hrrp_condition.sql` (validates ICD-9-to-condition
   mapping logic, 50-row preview) / `11_hrrp_condition_readmission_rates.sql` —
-  applies the mapping across the full dataset and computes readmission rates
-  for 4 HRRP conditions vs. national benchmarks
-- `10_readmission_rate_by_icd9.sql` — Readmission rates by admitting ICD-9
-  diagnosis code, same statistical reliability filter as `06` applied at
-  the diagnosis-code level  
+  applies the mapping across the full dataset and computes readmission rates for 4 HRRP conditions vs. national benchmarks
+
+- `10_readmission_rate_by_icd9.sql` — Readmission rates by admitting ICD-9 diagnosis code (`ADMTNG_ICD9_DGNS_CD`), chosen over principal diagnosis for its clinical availability early in the patient encounter — see file header for rationale and predictive-modeling implications. Uses the same n≥10 statistical reliability filter as `06`, computed from a raw `readmission_count` (see`10_readmission_rate_by_icd9_validation.sql` for fix verification: 7 diagnosis codes recovered, no false positives)
+
 - `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` — Top 5% utilizer flagging by claims volume, full and first-claim-only variants (validated in `13a_high_utilizer_flagging_validation.sql`)  
 - `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95%
   Wilson confidence intervals and national average comparison
@@ -171,20 +170,14 @@ Centers for Medicare & Medicaid Services. (n.d.). *Medicare fee-for-service DRG 
 U.S. Department of Health & Human Services. 
 https://www.cms.gov/research-statistics-data-and-systems/statistics-trends-and-reports/medicarefeeforsvcpartsab/downloads/drgdesc19.pdf
 
-
 Centers for Medicare & Medicaid Services. (n.d.). *Hospital Readmissions Reduction Program (HRRP)*. U.S. Department of Health & Human Services. https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions
 
-Rachoin, J.-S., Hunter, K., Varallo, J., & Cerceo, E. (2024). Impact of time 
-from discharge to readmission on outcomes: an observational study from the US 
+Rachoin, J.-S., Hunter, K., Varallo, J., & Cerceo, E. (2024). Impact of time from discharge to readmission on outcomes: an observational study from the US 
 National Readmission Database. *BMJ Open, 14*(8), e085466. 
 https://doi.org/10.1136/bmjopen-2024-085466
 
-Suter LG, Li SX, Grady JN, Lin Z, Wang Y, Bhat KR, Turkmani D, Spivack SB, 
-Lindenauer PK, Merrill AR, Drye EE, Krumholz HM, Bernheim SM. National patterns 
-of risk-standardized mortality and readmission after hospitalization for acute 
-myocardial infarction, heart failure, and pneumonia: update on publicly reported 
-outcomes measures based on the 2013 release. J Gen Intern Med. 2014 
-Oct;29(10):1333-40. doi: 10.1007/s11606-014-2862-5. PMID: 24825244; PMCID: PMC4175654.
+Suter LG, Li SX, Grady JN, Lin Z, Wang Y, Bhat KR, Turkmani D, Spivack SB, Lindenauer PK, Merrill AR, Drye EE, Krumholz HM, Bernheim SM. National patterns of risk-standardized mortality and readmission after hospitalization for acute 
+myocardial infarction, heart failure, and pneumonia: update on publicly reported outcomes measures based on the 2013 release. J Gen Intern Med. 2014 Oct;29(10):1333-40. doi: 10.1007/s11606-014-2862-5. PMID: 24825244; PMCID: PMC4175654.
 
 
 ## Author

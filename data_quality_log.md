@@ -51,3 +51,9 @@
   substantially below national benchmarks.
 - Decision: updated README HRRP table and Methods section with corrected rates 
   and field justification; added citation to References.
+
+## Query 10 Readmission Count Fix — 09/04/26
+- Bug: 10_readmission_rate_by_icd9.sql's HAVING clause reconstructed readmission counts via `readmission_rate * total_admissions`, using an already-rounded rate (3 decimal places). Rounding error could push a diagnosis code across the n≥10 CLT reliability threshold incorrectly.
+- Fix: Added a direct `SUM(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1 ELSE 0 END) AS readmission_count` column alongside the existing rounded rate; updated HAVING to filter on `readmission_count >= 10 AND total_admissions - readmission_count >= 10`. Same pattern as 06_readmission_by_drg.sql.
+- Verified via `10_readmission_rate_by_icd9_validation.sql`: found 7 false-negative diagnosis codes, all with `readmission_count` exactly equal to 10 — the true count cleared the threshold, but the rounded rate multiplied back through `total_admissions` fell just under it in each case. No false positives found. Fix expands the set of admitting diagnosis codes included in the 30-day readmission results by 7 codes.
+- Applied to: `10_readmission_rate_by_icd9.sql`.
