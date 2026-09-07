@@ -2,7 +2,6 @@
 -- Run once. Source: CMS Synthetic Public Use Files, 2008-2010 sample.
 
 CREATE DATABASE claims_practice;
-USE claims_practice;
 
 CREATE TABLE inpatient_claims (
   `DESYNPUF_ID` VARCHAR(20),
@@ -88,8 +87,11 @@ CREATE TABLE inpatient_claims (
   `HCPCS_CD_45` VARCHAR(15)
 );
 
+-- Path below is relative to the repo root. Run this script from the repo root,
+-- or adjust the path to match wherever you've placed the CSV.
+-- Download the file itself from the CMS DE-SynPUF source linked in README.md.
 
-LOAD DATA LOCAL INFILE '/Users/douglas/downloads/DE1_0_2008_to_2010_Inpatient_Claims_Sample_1.csv'
+LOAD DATA LOCAL INFILE 'data/raw/DE1_0_2008_to_2010_Inpatient_Claims_Sample_1.csv'
 INTO TABLE inpatient_claims
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'

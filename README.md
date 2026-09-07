@@ -81,6 +81,13 @@ If applied to real claims data, this analysis would enable:
   sampling noise — especially at the small-n end of DRGs passing the
   CLT filter
 
+## Setup
+
+1. Download the CMS DE-SynPUF Inpatient Claims Sample 1 file (2008-2010) from the
+   Data Source link below.
+2. Place the CSV in `data/raw/` at the repo root (create the folder if it doesn't exist).
+3. Run `01_setup_table.sql` from the repo root — it creates the `claims_practice` database and `inpatient_claims` table, then loads the CSV via `LOAD DATA LOCAL INFILE`.
+4. Before running any other query file, set your MySQL connection's default database to `claims_practice` — no query file sets this itself.
 
 ## Analyses
 - `03a_los_by_drg.sql` / `03b_los_by_drg.sql` — Row-level and DRG-aggregated

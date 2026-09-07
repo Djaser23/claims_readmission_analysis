@@ -14,8 +14,6 @@ under the threshold and evade capture.
 */
 
 
-use claims_practice;
-
 WITH censored_data_filter AS (
 SELECT
 DATE_SUB(STR_TO_DATE(MAX(NCH_BENE_DSCHRG_DT), '%Y%m%d'), INTERVAL 30 DAY) 

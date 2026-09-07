@@ -18,7 +18,6 @@ or derived rate, in order to preserve sufficient statistical accuracy.
 For a more detailed account of the difference in results of these queries see '10_readmission_rate_by_icd9_validation.sql'
 */
 
-use claims_practice;
 
 WITH censored_data_filter AS (
 SELECT

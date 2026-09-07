@@ -1,5 +1,5 @@
 -- Checks for data quality issues
-USE claims_practice;
+
 
 SELECT 
   SUM(CASE WHEN DESYNPUF_ID = '' OR DESYNPUF_ID IS NULL THEN 1 ELSE 0 END) AS missing_patient_id,

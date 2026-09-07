@@ -26,6 +26,9 @@
 - [x] PMPM approximation
 - [x] High-utilizer flagging
 - [x] Add markdown cells to notebook explaining methodology and limitations
+- [x] Fix hardcoded local paths (01_setup_table.sql, HRRP notebook)
+- [x] Standardize database connection — remove per-file USE statements
+- [x] Add README Setup section
 
 ## In Progress
 
@@ -43,8 +46,16 @@
 ## Upcoming
 
 - [ ] Polish and document final analyses
-- [ ] Update README Analyses section
-- [ ] Add Tableau/PowerBI visualization 
+- [ ] Add Tableau/PowerBI visualization
+- [ ] Add requirements.txt listing project dependencies (pandas, matplotlib, mysql-connector-python, python-dotenv)
+- [ ] Join DRG codes to their descriptions (CMS DRG PDF) — both in queries and in readmission_analysis.ipynb's chart, which currently shows bare codes
+- [ ] Add caveat to 09/11 docstrings: HRRP condition mapping uses a single 3-digit ICD-9 prefix per condition, a simplification vs. CMS's actual broader code sets
+- [ ] Rename 12_pmpm_analysis.sql's `three_years` CTE — misleading name, no additional year filtering happens there
+- [ ] Fix stale note under "Condition-level readmission rates..." in Completed above — reads like abandoned work despite being shipped
+- [ ] Dedicated planning session: map (not build) predictive layer — logistic regression vs. tree-based tradeoffs, admitting vs. principal diagnosis leakage question
+- [ ] Verify how many DRGs drop below n×p≥10 filter under stricter (no single-day-gap) readmission definition
+- [ ] Decide: build 10b (principal-diagnosis companion to query 10) standalone, or fold into predictive-layer planning
+- [ ] Add PRIMARY KEY / indexes to 01_setup_table.sql, or note it wouldn't scale as-is
 
 ## Known Data Limitations
 - Synthetic data — patterns may not reflect real Medicare population
