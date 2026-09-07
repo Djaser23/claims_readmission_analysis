@@ -13,9 +13,9 @@ reflects the use of the Central Limit Theorem in the context of rates.
 HAVING readmission_count >= 10 AND -- filters out statistically unreliable rates
 total_admissions - readmission_count >= 10
 Note: readmission_rate and total_admissions here are point estimates. 
-95% confidence intervals (Wilson and Clopper-Pearson) are computed downstream 
-in hrrp_condition_readmission_analysis.ipynb using readmission_count and 
-total_admissions as inputs, prior to any DRG-level ranking or benchmarking.
+95% confidence intervals (Wilson) are computed downstream in 
+readmission_analysis.ipynb using readmission_count and total_admissions as inputs, 
+prior to any DRG-level ranking or benchmarking.
 These DRG grouped readmission rates are ready for scrutiny given the acknowledgement
 that single day interval readmissions are included which may have been planned transfers.
 A mapping of DRG to expected length of stay is appropriate to determine where 
