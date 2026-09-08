@@ -15,11 +15,17 @@ Rates are expressed as percentages. Censoring correction applied — discharges 
   COPD:          20.8%
   AMI:           15.6%
 
-All four observed rates are substantially lower than national benchmarks, 
-consistent with DE-SynPUF synthetic data producing dampened readmission patterns.
+All four observed rates are substantially lower than national benchmarks (See README 
+for Full Discussion)
 
 Uses ICD9_DGNS_CD_1 (principal discharge diagnosis) per CMS HRRP cohort 
 methodology (Suter et al., see References) — not ADMTNG_ICD9_DGNS_CD.
+Suter et al. supports this field choice for AMI, Heart Failure, and Pneumonia;
+that study does not address COPD.
+
+This mapping uses a single leading ICD-9 prefix per condition as a simplified proxy
+for demonstration purposes. This simplification has not been validated against any
+official CMS specification of condition-defining diagnosis codes.
 */
 
 

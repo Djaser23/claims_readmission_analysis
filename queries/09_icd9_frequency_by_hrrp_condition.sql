@@ -1,10 +1,11 @@
 /*
 ICD-9 Condition Mapping
-Maps admitting diagnosis codes to HRRP condition categories:
+Maps principal discharge diagnosis codes (ICD9_DGNS_CD_1) to HRRP condition categories:
 AMI, Heart Failure, Pneumonia, COPD
-Based on CMS HRRP condition definitions.
-Starting point for condition-level readmission rate analysis.
-Source: https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions
+This mapping uses a single leading ICD-9 prefix per condition (e.g., 428% for
+Heart Failure) as a simplified proxy for demonstration purposes. This
+simplification has not been validated against any official CMS specification
+of condition-defining diagnosis codes. 
 */
 
 SELECT ICD9_DGNS_CD_1,

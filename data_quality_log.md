@@ -43,17 +43,21 @@
   documenting the verification and the reason for the match.
 
 ## Query 09 & 11 Diagnosis code update — 08/16/26 
-- Replaced admitting diagnosis code (ADMTNG_ICD9_DGNS_CD) with principal discharge 
-  diagnosis code (ICD9_DGNS_CD_1) in queries 09 and 11, per CMS HRRP cohort 
-  methodology (Suter et al., 2014).
-- Recomputing shifted rates by ≤0.5 percentage points across all four conditions; 
-  no substantial change to the overall finding that observed rates fall 
-  substantially below national benchmarks.
-- Decision: updated README HRRP table and Methods section with corrected rates 
-  and field justification; added citation to References.
+- Replaced admitting diagnosis code (ADMTNG_ICD9_DGNS_CD) with principal discharge diagnosis code (ICD9_DGNS_CD_1) in queries 09 and 11, per CMS HRRP cohort methodology (Suter et al., 2014).
+- Recomputing shifted rates by ≤0.5 percentage points across all four conditions; no substantial change to the overall finding that observed rates fall substantially below national benchmarks.
+- Decision: updated README HRRP table and Methods section with corrected rates and field justification; added citation to References.
 
 ## Query 10 Readmission Count Fix — 09/04/26
 - Bug: 10_readmission_rate_by_icd9.sql's HAVING clause reconstructed readmission counts via `readmission_rate * total_admissions`, using an already-rounded rate (3 decimal places). Rounding error could push a diagnosis code across the n≥10 CLT reliability threshold incorrectly.
 - Fix: Added a direct `SUM(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1 ELSE 0 END) AS readmission_count` column alongside the existing rounded rate; updated HAVING to filter on `readmission_count >= 10 AND total_admissions - readmission_count >= 10`. Same pattern as 06_readmission_by_drg.sql.
 - Verified via `10_readmission_rate_by_icd9_validation.sql`: found 7 false-negative diagnosis codes, all with `readmission_count` exactly equal to 10 — the true count cleared the threshold, but the rounded rate multiplied back through `total_admissions` fell just under it in each case. No false positives found. Fix expands the set of admitting diagnosis codes included in the 30-day readmission results by 7 codes.
 - Applied to: `10_readmission_rate_by_icd9.sql`.
+
+## Query 09 & 11 HRRP Mapping Caveats — 09/07/26
+- Gap 1 (code breadth): queries 09 and 11 map HRRP conditions using a single leading ICD-9 prefix per condition (410/428/486/491-492-496), not validated against any official CMS specification of condition-defining codes. Checked two candidate CMS sources (HRRP overview page, QualityNet readmission methodology page) via find-in-page search for "ICD-9" — neither contains the
+term, consistent with CMS's current specifications using ICD-10-CM (ICD-9 was retired for U.S. clinical coding in Oct 2015); this explanation is unverified.
+- Gap 2 (citation scope): the Suter et al. (2014) citation used to justify the principal-diagnosis field choice (ICD9_DGNS_CD_1 over ADMTNG_ICD9_DGNS_CD) was applied to all four conditions in 11's docstring and the README. Fetched and read the full paper directly — its cohort is defined as AMI, HF, and pneumonia only; COPD is not mentioned anywhere in the paper. The citation does not
+support the field choice for COPD.
+- These two gaps are independent of each other and of the 08/16/26 diagnosis-field fix — that fix addressed which field to read from; Gap 1 is about how many codes are matched within that field; Gap 2 is about which conditions the original citation for the field choice actually covers.
+- Decision: added caveats to 09/11 docstrings and README (Methods + Limitations) stating both gaps without overclaiming validation or citation support that doesn't exist. Did not attempt to source COPD's field-choice justification separately — flagged as unsourced rather than guessed at.
+- Also corrected in passing: 09's docstring said "admitting diagnosis" though the query uses `ICD9_DGNS_CD_1` (principal diagnosis) — a leftover from before the 08/16/26 Suter fix that was never updated in 09 (11 was updated correctly at the time).

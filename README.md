@@ -72,8 +72,13 @@ If applied to real claims data, this analysis would enable:
 - **Statistical reliability filter:** DRGs retained only where n×p ≥ 10 and
   n×(1−p) ≥ 10 (CLT proportions check), preventing unstable rates from
   low-volume diagnosis groups
+ 
 - **HRRP condition mapping:** ICD-9 diagnosis codes mapped to condition categories 
-  (AMI, Heart Failure, Pneumonia, COPD) using `ICD9_DGNS_CD_1` (principal discharge diagnosis), consistent with CMS HRRP cohort methodology (Suter et al., 2014 — see References). Rates were originally computed using admitting diagnosis; recomputing with principal diagnosis shifted rates by ≤0.5 percentage points across all four conditions, with no change to the overall finding that observed rates fall substantially below national benchmarks.     
+  (AMI, Heart Failure, Pneumonia, COPD) using `ICD9_DGNS_CD_1` (principal discharge diagnosis). This field choice is consistent with CMS HRRP cohort methodology for AMI, Heart Failure, and Pneumonia (Suter et al., 2014 — see References); Suter et 
+  al. does not address COPD. Rates were originally computed using admitting diagnosis; recomputing with principal diagnosis shifted rates by ≤0.5 percentage points across all four conditions, with no change to the overall finding that observed rates fall substantially below national benchmarks. Condition mapping 
+  uses a single leading ICD-9 prefix per condition, a simplification not validated against official CMS specifications — see Limitations.
+
+
 - **Rate calculation:** Conditional aggregation (AVG of CASE WHEN) by DRG
 - **Uncertainty quantification:** 95% Wilson confidence intervals computed
   for each DRG's readmission rate (statsmodels.stats.proportion_confint),
@@ -125,9 +130,7 @@ loaded as 0), with the reasoning for each decision.
 
 ## Limitations
 
-- DE-SynPUF is synthetic: distributions approximate real Medicare claims
-  but individual-level patterns are artificial; rates here characterize
-  the method, not the true population
+- DE-SynPUF is synthetic: distributions approximate real Medicare claims but individual-level patterns are artificial; rates here characterize the method, not the true population
 - Dates stored as YYYYMMDD strings, not DATE type. Requires STR_TO_DATE() conversion before any date math. 
 - Readmission defined as any-cause inpatient return within 30 days; no
   transfer or planned-readmission exclusions (unlike CMS HRRP methodology)
@@ -135,7 +138,8 @@ loaded as 0), with the reasoning for each decision.
 - Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.
 - Average monthly inpatient cost per admitted patient is reported in place of true PMPM — DE-SynPUF's inpatient/outpatient claims files don't include enrollment/eligibility data, so a true member-months denominator (which would include zero-claim enrolled members) isn't available from this data alone. 
 - The high-utilizer flagging filter in files 13a_high_utilizer_flagging and 13b_high_utilizer_first_claim utilizes the ROW_NUMBER() window function instead of PERCENT_RANK() in order to deterministically produce approximately 5% of high utilizers per year. Due to this methodology, ties at the cutoff boundary are broken by patient ID, meaning members with identical claim counts near the threshold may be arbitrarily included or excluded.
-
+- The HRRP condition mapping (`09_icd9_frequency_by_hrrp_condition.sql`, `11_hrrp_condition_readmission_rates.sql`) uses a single leading ICD-9 prefix per condition (e.g. `428%` for Heart Failure) as a simplified proxy. This simplification has not been validated against any official CMS specification of condition-defining diagnosis codes.
+- The principal-diagnosis field choice for HRRP condition mapping is sourced to Suter et al. (2014) for AMI, Heart Failure, and Pneumonia only; that study does not cover COPD, so the same field choice is applied to COPD by extension, without separate citation support.
 
 
 ## Data Source
@@ -179,8 +183,7 @@ https://www.cms.gov/research-statistics-data-and-systems/statistics-trends-and-r
 
 Centers for Medicare & Medicaid Services. (n.d.). *Hospital Readmissions Reduction Program (HRRP)*. U.S. Department of Health & Human Services. https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions
 
-Rachoin, J.-S., Hunter, K., Varallo, J., & Cerceo, E. (2024). Impact of time from discharge to readmission on outcomes: an observational study from the US 
-National Readmission Database. *BMJ Open, 14*(8), e085466. 
+Rachoin, J.-S., Hunter, K., Varallo, J., & Cerceo, E. (2024). Impact of time from discharge to readmission on outcomes: an observational study from the US National Readmission Database. *BMJ Open, 14*(8), e085466. 
 https://doi.org/10.1136/bmjopen-2024-085466
 
 Suter LG, Li SX, Grady JN, Lin Z, Wang Y, Bhat KR, Turkmani D, Spivack SB, Lindenauer PK, Merrill AR, Drye EE, Krumholz HM, Bernheim SM. National patterns of risk-standardized mortality and readmission after hospitalization for acute 
