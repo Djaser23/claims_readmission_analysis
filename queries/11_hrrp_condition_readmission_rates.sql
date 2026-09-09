@@ -26,6 +26,10 @@ that study does not address COPD.
 This mapping uses a single leading ICD-9 prefix per condition as a simplified proxy
 for demonstration purposes. This simplification has not been validated against any
 official CMS specification of condition-defining diagnosis codes.
+
+readmission_count added on 9/8/26 to support Wilson 95% CI computation
+downstream (avoids reconstructing from the rounded readmission_rate —
+see data_quality_log.md).
 */
 
 
@@ -72,10 +76,10 @@ ELSE NULL END AS mapped_HRRP_diagnosis
 FROM CTE3)
 
 
-
 SELECT
 mapped_HRRP_diagnosis, 
 ROUND(AVG(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1.0 ELSE 0 END)* 100, 1) AS readmission_rate,
+SUM(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1 ELSE 0 END) AS readmission_count,
 COUNT(*) AS total_admissions
 FROM CTE4
 WHERE mapped_HRRP_diagnosis IS NOT NULL
