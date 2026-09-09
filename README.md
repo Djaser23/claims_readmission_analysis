@@ -29,20 +29,21 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
   immunologic, and neurologic conditions — no cardiac DRGs appear in the 
   top 5, despite cardiac conditions being the primary focus of CMS HRRP readmission reduction programs.
 
-All diagnosis based HRRP conditions have readmission rates significantly lower than published baselines.
+- Note: Unlike the DRG-level result above, none of the 4 HRRP conditions' 95% confidence intervals overlap their national benchmark — even the upper CI bound stays well below benchmark in every case (e.g. Heart Failure's upper bound of ~11.7% vs. a 24.8% benchmark). Given the much larger per-condition sample sizes (n=1,633–3,132 vs. n=57–80 for the top DRGs), these CIs are roughly 6–10x narrower than the DRG-level CIs above despite using the same underlying claims data — a large enough margin that CI non-overlap serves as a reasonable informal proxy for a real difference, though not a substitute for a formal two-sample test. See uncertainty quantification in Methods.  
 
-| Condition | Cited Readmission Rate | DE-SynPUF rate | Difference (pp) |
-|-----------|------------------------|----------------|------------|
-| Heart Failure | 24.8% | 10.5% | -14.3 |
-| Pneumonia | 16.4% | 10.3% | -6.1 |
-| COPD | 20.8% | 9.8% | -11.0 |
-| AMI | 15.6% | 9.9% | -5.7 |
+All 4 HRRP condition readmission rates fall well below their published national benchmarks.
+
+| Condition | Cited Readmission Rate | DE-SynPUF rate | 95% CI | Difference (pp) |
+|-----------|------------------------|----------------|--------|------------|
+| Heart Failure | 24.8% | 10.5% | 9.51–11.66% | -14.3 |
+| Pneumonia | 16.4% | 10.3% | 9.14–11.55% | -6.1 |
+| COPD | 20.8% | 9.8% | 8.58–11.17% | -11.0 |
+| AMI | 15.6% | 9.9% | 8.51–11.40% | -5.7 |
 
 *Observed rates are crude (unadjusted); national benchmarks are risk-standardized. Synthetic data limitations apply — see Limitations section.*
 
 ## Synthesis: Reconciling DRG-Level and HRRP-Level Findings
-The two headline findings above appear to point in different directions: the top 5 DRGs by readmission rate are non-cardiac (hematologic, urologic, orthopedic, immunologic, neurologic), while the four HRRP-tracked conditions — the specific diagnoses CMS's readmission reduction program is built around — all show observed rates well below national benchmarks. Read at face value, this suggests HRRP's named conditions may not be the actual readmission drivers in this population.
-That reading should be treated as a hypothesis, not a conclusion. The DRG-level result is undercut by its own uncertainty: all five top-DRG 95% confidence intervals overlap the 14.67% national benchmark (see Key Findings), meaning none are statistically distinguishable from average at this sample size (n=57–80). The two comparisons also aren't methodologically aligned — DRG-level rates carry CIs, HRRP-level rates are crude and compared against a risk-standardized benchmark from a different source. Given these limitations and the synthetic nature of the underlying data, this analysis cannot support a confident claim that HRRP's targeted conditions are misaligned with this population's actual readmission risk — only that the pattern is worth checking against real claims data in V2.
+The two headline findings above appear to point in different directions: the top 5 DRGs by readmission rate are non-cardiac (hematologic, urologic, orthopedic, immunologic, neurologic), while the four HRRP-tracked conditions — the specific diagnoses CMS's readmission reduction program is built around — all show observed rates well below national benchmarks. Read at face value, this suggests HRRP's named conditions may not be the actual readmission drivers in this population. That reading should be treated as a hypothesis, not a conclusion. The DRG-level result is undercut by its own uncertainty: all five top-DRG 95% confidence intervals overlap the 14.67% national benchmark (see Key Findings), meaning none are statistically distinguishable from average at this sample size (n=57–80). The HRRP-level result is on firmer ground — CIs are 6–10x narrower with no overlap — so this isn't two weak signals canceling out, but a fragile small-n signal against a solid one. The remaining gap: the two benchmarks aren't directly comparable — DRG-level checks against an all-cause crude rate (Definitive Healthcare, 2025), HRRP-level against condition-specific risk-standardized rates (Rachoin et al., 2024). Given that mismatch and the synthetic data, this analysis still can't confidently claim HRRP's targeted conditions are misaligned with this population's risk — but the pattern is better supported than the DRG-level result alone suggests, and worth checking against real claims data in V2.
 
 ## Decision Implications
 **Note: These implications are directional only — DE-SynPUF synthetic data does not support production-level conclusions. V2 on real CMS Medicare data via BigQuery is planned.**
@@ -80,11 +81,8 @@ If applied to real claims data, this analysis would enable:
 
 
 - **Rate calculation:** Conditional aggregation (AVG of CASE WHEN) by DRG
-- **Uncertainty quantification:** 95% Wilson confidence intervals computed
-  for each DRG's readmission rate (statsmodels.stats.proportion_confint),
-  since point estimates alone can't distinguish a real difference from
-  sampling noise — especially at the small-n end of DRGs passing the
-  CLT filter
+
+- **Uncertainty quantification:** 95% Wilson confidence intervals computed for each DRG's readmission rate and, separately, for each of the 4 HRRP conditions (statsmodels.stats.proportion_confint), since point estimates alone can't distinguish a real difference from sampling noise. The HRRP-condition CIs benefit from far larger per-group sample sizes than the DRG-level CIs (n=1,633–3,132 vs. n=57–80), producing intervals roughly 6–10x narrower and correspondingly more statistically decisive comparisons against benchmark.  
 
 ## Setup
 
