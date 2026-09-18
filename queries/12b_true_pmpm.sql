@@ -23,7 +23,18 @@ PMPM = (total cost across all members) / (member-months of enrollment)
 DE-SynPUF does contain additional tables with beneficiary months- Table: beneficiary_summary, 
 column: BENE_HI_CVRAGE_TOT_MONS, therefore the member-months denominator is able to be constructed. 
 
-Note on validation: total dollars reconciled against member-months, ~0.36% rounding variance
+
+KNOWN LIMITATION (found during validation, see 13_pmpm_validation.sql):
+This query's LEFT JOIN + HAVING member_months > 0 filter silently excludes
+members with BENE_HI_CVRAGE_TOT_MONS = 0 from BOTH the numerator and
+denominator. Investigation found this zero-coverage population is NOT
+primarily explained by death (only ~1.6% of zero-coverage rows have a
+BENE_DEATH_DT), contradicting an earlier assumption. The cause of the
+remaining ~98% zero-coverage rows is unresolved. This means an unknown
+population of real inpatient claims (~$486K in 2010 alone) is currently
+excluded from this PMPM calculation without documented justification.
+Follow-up needed: investigate what drives BENE_HI_CVRAGE_TOT_MONS = 0
+for non-decedents before treating this exclusion as final.
 */
 
 
@@ -67,5 +78,3 @@ LEFT JOIN yearly_claim_per_mem y ON y.DESYNPUF_ID = mm.DESYNPUF_ID AND
 y.claim_year = mm.BENE_YEAR
 GROUP BY mm.BENE_YEAR
 ORDER BY mm.BENE_YEAR DESC
-
-
