@@ -16,10 +16,16 @@ member's BENE_HI_CVRAGE_TOT_MONS = 0 -- because their mem_month_cte
 row is filtered out before the join, so their claims never find a
 match (~34 members affected in 2010). This query does NOT apply that
 same filter, so those claims are included here but excluded in 12b.
-See 12b_true_pmpm.sql's own KNOWN LIMITATION note for the open
-follow-up.
-*/
 
+That filter was originally written on the assumption that zero-coverage
+rows were explained by member death (see 02b, Finding 2). That assumption
+was WRONG, caused by a hidden bug in the original death check (BENE_DEATH_DT
+IS NOT NULL alone missed that the field stores empty strings for rows with
+no recorded death date). Corrected check: of 18,854 zero-coverage rows,
+only 307 (~1.6%) have a real death date; the remaining ~98% are
+unexplained as of 2026-09-18. See 12b_true_pmpm.sql's own KNOWN LIMITATION
+note for the full explanation and open follow-up.
+*/
 
 WITH MM AS (
 SELECT BENE_YEAR, SUM(BENE_HI_CVRAGE_TOT_MONS) AS member_months_per_year

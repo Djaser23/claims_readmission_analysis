@@ -24,17 +24,23 @@ DE-SynPUF does contain additional tables with beneficiary months- Table: benefic
 column: BENE_HI_CVRAGE_TOT_MONS, therefore the member-months denominator is able to be constructed. 
 
 
-KNOWN LIMITATION (found during validation, see 13_pmpm_validation.sql):
+KNOWN LIMITATION (found during validation, see 12c_pmpm_validation.sql):
 This query's LEFT JOIN + HAVING member_months > 0 filter silently excludes
 members with BENE_HI_CVRAGE_TOT_MONS = 0 from BOTH the numerator and
-denominator. Investigation found this zero-coverage population is NOT
-primarily explained by death (only ~1.6% of zero-coverage rows have a
-BENE_DEATH_DT), contradicting an earlier assumption. The cause of the
-remaining ~98% zero-coverage rows is unresolved. This means an unknown
-population of real inpatient claims (~$486K in 2010 alone) is currently
-excluded from this PMPM calculation without documented justification.
+denominator. This filter was originally written on the assertion that
+zero-coverage rows were explained by member death - this was due to a
+100% incidence of NOT NULL BENE_DEATH_DT having 0 BENE_HI_CVRAGE_TOT_MONS
+That assumption was wrong. 02b's original death check used BENE_DEATH_DT
+IS NOT NULL alone, which missed that the field stores empty strings ('')
+for rows with no recorded death date, not true NULLs, and so counted every
+zero-coverage row as "Died." Corrected check (IS NOT NULL AND != ''): of
+18,854 zero-coverage rows, only 307 (~1.6%) have a real death date; the
+remaining 18,547 (~98%) have no death date recorded at all, and their
+cause is unresolved as of 2026-09-18. This means an unknown population of
+real inpatient claims (~$486K in 2010 alone) is currently excluded from
+this PMPM calculation without documented justification.
 Follow-up needed: investigate what drives BENE_HI_CVRAGE_TOT_MONS = 0
-for non-decedents before treating this exclusion as final.
+for the ~98% with no death date, before treating this exclusion as final.
 */
 
 
@@ -59,7 +65,11 @@ FROM  three_years
 GROUP BY claim_year, DESYNPUF_ID)
 
 
--- mem_month_cte creates member_months variable and filters out patients who died 
+/* 
+mem_month_cte creates member_months variable and filters out rows with
+0 coverage months (originally believed to be deaths only -- see KNOWN
+LIMITATION above, this is not accurate)
+*/
 , mem_month_cte AS (
 SELECT BENE_YEAR, DESYNPUF_ID, BENE_HI_CVRAGE_TOT_MONS AS member_months
 FROM beneficiary_summary
