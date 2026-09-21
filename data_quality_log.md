@@ -66,3 +66,27 @@ support the field choice for COPD.
 - Query previously output only `readmission_rate` (rounded to 1 decimal) and `total_admissions`, with no raw numerator. Per the same reconstruction-risk logic flagged in the Sep 4 2026 entry, adding this directly as `SUM(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1 ELSE 0 END)` rather than back-deriving from the rounded rate avoids introducing rounding error, consistent with the fix pattern already applied in `06_readmission_by_drg.sql` and `10_readmission_rate_by_icd9.sql`.
 - Verified: `readmission_count / total_admissions * 100` rounds to the pre-existing `readmission_rate` for all 4 conditions (Heart Failure 330/3132, Pneumonia 251/2442, AMI 161/1633, COPD 198/2021) — no discrepancy found, confirming the original point estimates were already accurate.
 - This `readmission_count` is needed as direct input to the Wilson 95% CI computation (`statsmodels.stats.proportion_confint`) added to `hrrp_condition_readmission_analysis.ipynb`.
+
+## Coverage/Claims Contradiction Check — 09/20/26
+- Investigated whether zero-coverage member-years (BENE_HI_CVRAGE_TOT_MONS = 0) 
+  have paid inpatient claims in the same year -- a direct contradiction if true, 
+  since Medicare shouldn't pay inpatient claims for beneficiaries with no coverage 
+  on record.
+- Before treating any result as valid, verified both fields against the official 
+  CMS DE-SynPUF codebook: BENE_HI_CVRAGE_TOT_MONS confirmed as Part A coverage 
+  months; CLM_PMT_AMT confirmed as a genuine reimbursement figure (feeds CMS's 
+  own MEDREIMB_IP formula per Appendix 2).
+- Result: $4.76M in inpatient claims across 2008-2010 tied to zero-coverage 
+  member-years (2008: $2,360,400 / 2009: $1,914,000 / 2010: $486,000). The 2010 
+  figure matches the discrepancy originally found in 12b_true_pmpm.sql, 
+  cross-validating the pattern.
+- Ruled out death date as the explanation: only 307 of 18,854 zero-coverage rows 
+  (1.6%) have a recorded death date; the empty-string death-date rate within the 
+  zero-coverage group (98.37%) is statistically indistinguishable from the 
+  table-wide rate (98.41%, see 02c), meaning death-date patterns don't explain 
+  why this group has zero coverage.
+- Caveat: CMS states DE-SynPUF variables are imputed/coarsened for disclosure 
+  protection, so this may be a synthetic-data artifact rather than a real 
+  processing error.
+- Root cause of the broader ~98% unexplained zero-coverage population remains 
+  open. Applied to: new file `12d_coverage_claims_contradiction_check.sql`.
