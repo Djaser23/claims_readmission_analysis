@@ -90,3 +90,22 @@ support the field choice for COPD.
   processing error.
 - Root cause of the broader ~98% unexplained zero-coverage population remains 
   open. Applied to: new file `12d_coverage_claims_contradiction_check.sql`.
+
+## Query 10 vs 10b — Admitting vs. Principal Diagnosis Comparison — 09/21/26
+- Long-open question (flagged 09/04/26): whether 10_readmission_rate_by_icd9.sql
+  should switch from admitting diagnosis to principal diagnosis, matching the
+  09/16/26 fix applied to queries 09 and 11.
+- Resolution: not a bug. Admitting diagnosis (available early, at intake) and
+  principal diagnosis (confirmed at discharge, CMS-standard for HRRP methodology)
+  are two deliberately distinct, both-valid analytical framings — not one field
+  being "wrong." Built 10b_readmission_rate_by_icd9_principal.sql as a companion
+  query (same structure as 10, swapped to ICD9_DGNS_CD_1) rather than modifying 10.
+- Comparison findings: some codes show nearly identical rate/count/volume across
+  both fields (e.g. pneumonia/486: 250/2353 admitting vs. 251/2442 principal) —
+  consistent with admitting and principal diagnosis converging for conditions
+  usually confirmed at intake. Others diverge substantially, both in which codes
+  clear the n≥10 reliability threshold and in total admission volume for the same
+  code under each field (e.g. 43491: 761 admissions under admitting vs. 1064 under principal) — read as admission-time impression vs. discharge-confirmed-diagnosis divergence.
+- Decision: keep both queries. A dedicated future query will quantify how often
+  the two fields disagree on the same claim, with ICD-9 codes mapped to
+  human-readable diagnosis names — tracked separately, not folded into 10/10b.  

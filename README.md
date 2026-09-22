@@ -106,9 +106,8 @@ If applied to real claims data, this analysis would enable:
 - `09_icd9_frequency_by_hrrp_condition.sql` (validates ICD-9-to-condition
   mapping logic, 50-row preview) / `11_hrrp_condition_readmission_rates.sql` —
   applies the mapping across the full dataset and computes readmission rates for 4 HRRP conditions vs. national benchmarks
-
 - `10_readmission_rate_by_icd9.sql` — Readmission rates by admitting ICD-9 diagnosis code (`ADMTNG_ICD9_DGNS_CD`), chosen over principal diagnosis for its clinical availability early in the patient encounter — see file header for rationale and predictive-modeling implications. Uses the same n≥10 statistical reliability filter as `06`, computed from a raw `readmission_count` (see`10_readmission_rate_by_icd9_validation.sql` for fix verification: 7 diagnosis codes recovered, no false positives)
-
+- `10b_readmission_rate_by_icd9_principal.sql` — Companion to `10_readmission_rate_by_icd9.sql`, using principal diagnosis (`ICD9_DGNS_CD_1`) instead of admitting diagnosis. Built to compare two distinct, both-valid framings — early clinical accessibility (10) vs. CMS-standard discharge basis (10b) — rather than treating one as a fix for the other. Same n≥10 statistical reliability filter as `10`/`06`.
 - `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` — Top 5% utilizer flagging by claims volume, full and first-claim-only variants (validated in `13a_high_utilizer_flagging_validation.sql`)  
 - `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95%
   Wilson confidence intervals and national average comparison
