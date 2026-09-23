@@ -30,9 +30,10 @@
 - [x] Standardize database connection — remove per-file USE statements
 - [x] Add README Setup section
 - [x] Add caveat to 09/11 docstrings: HRRP condition mapping uses a single 3-digit ICD-9 prefix per condition, a simplification vs. CMS's actual broader code sets
+- [x] Build 10b_readmission_rate_by_icd9_principal.sql (principal-diagnosis companion to 10); README Analyses and data_quality_log entries added
 
 ## In Progress
-
+- [ ] ICD-9 diagnosis description lookup table — scripts/load_icd9_dx_lookup.py parses CMS v28 file (CMS28_DESC_LONG_DX.txt, Latin-1, 14,432 codes); table creation and insert still to add
 
 
 ## Planned for Version 2
@@ -40,7 +41,7 @@
 - [ ] Logistic/linear regression readmission prediction model on BigQuery data
 - [ ] Logistic/linear regression High-utilizer prediction model on BigQuery data (diagnosis and procedure coding)
 - [ ] Tableau/PowerBI visualization - heatmap visualization of ICD-9 diagnosis code frequency among high-utilizers
-- [] Run icd-9 frequency analysis - ICD-9 code frequency rates in the top 5% cohort vs.the same rates in the bottom 95% - Compute the ratio or percentage point difference
+- [ ] Run icd-9 frequency analysis - ICD-9 code frequency rates in the top 5% cohort vs.the same rates in the bottom 95% - Compute the ratio or percentage point difference
 - [ ] Resolve iCloud duplicate folder issue
 
 
@@ -54,9 +55,11 @@
 - [ ] Fix stale note under "Condition-level readmission rates..." in Completed above — reads like abandoned work despite being shipped
 - [ ] Dedicated planning session: map (not build) predictive layer — logistic regression vs. tree-based tradeoffs, admitting vs. principal diagnosis leakage question
 - [ ] Verify how many DRGs drop below n×p≥10 filter under stricter (no single-day-gap) readmission definition
-- [ ] Decide: build 10b (principal-diagnosis companion to query 10) standalone, or fold into predictive-layer planning
 - [ ] Add PRIMARY KEY / indexes to 01_setup_table.sql, or note it wouldn't scale as-is
 - [ ] Join Beneficiary Summary file (`BENE_HI_CVRAGE_TOT_MOS`) to `12_pmpm_analysis.sql` for a true PMPM member-months denominator
+- [ ] Admitting vs. principal diagnosis comparison — % of claims where ADMTNG_ICD9_DGNS_CD differs from ICD9_DGNS_CD_1 (computed across all claims), joined to lookup table for readable names; report lookup match rate
+- [ ] 95% CI for overall 30-day readmission rate (9.67%, n=66,449) — compute directly (Wald, checked against Wilson) and report in README
+- [ ] Zero-coverage distribution-comparison EDA — zero vs. non-zero coverage member-years across state, sex, age, other coverage fields; Jupyter notebook (primary write-up) + Tableau companion
 
 ## Known Data Limitations
 - Synthetic data — patterns may not reflect real Medicare population
