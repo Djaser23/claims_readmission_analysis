@@ -114,7 +114,7 @@ If applied to real claims data, this analysis would enable:
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates substantially below benchmarks, consistent with synthetic data limitations.
 - `12_pmpm_analysis.sql` — average monthly inpatient cost per admitted patient by year (not a true PMPM — see Limitations)
 - `12b_true_pmpm.sql` — True PMPM calculation using BENE_HI_CVRAGE_TOT_MONS as the member-months denominator. Fixed 09/27/26 to include zero-coverage members (see Limitations and data_quality_log.md); corrected figures: 198.77 (2008), 190.45 (2009), 105.09 (2010).
-- `12c_pmpm_validation.sql` — Independent validation of `12b` via a structurally different query path; surfaced the zero-coverage exclusion gap (~$486K in 2010 alone) that `12b`'s KNOWN LIMITATION note documents
+- `12c_pmpm_validation.sql` — Independent validation of `12b` via a structurally different query path; originally surfaced the zero-coverage exclusion gap (~$486K in 2010 alone), fixed 09/27/26 (see `12b`'s BUG HISTORY note and data_quality_log.md)
 - `12d_coverage_claims_contradiction_check.sql` — Tests whether zero-coverage member-years have paid inpatient claims; see Limitations
 
 
