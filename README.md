@@ -113,7 +113,7 @@ If applied to real claims data, this analysis would enable:
   Wilson confidence intervals and national average comparison
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates substantially below benchmarks, consistent with synthetic data limitations.
 - `12_pmpm_analysis.sql` — average monthly inpatient cost per admitted patient by year (not a true PMPM — see Limitations)
-- `12b_true_pmpm.sql` — True PMPM calculation using BENE_HI_CVRAGE_TOT_MONS as the member-months denominator (supersedes `12_pmpm_analysis.sql`'s average-cost-per-patient approach). Known limitation: a LEFT JOIN + HAVING filter silently excludes zero-coverage members from both numerator and denominator — see Limitations and `12d`
+- `12b_true_pmpm.sql` — True PMPM calculation using BENE_HI_CVRAGE_TOT_MONS as the member-months denominator. Fixed 09/27/26 to include zero-coverage members (see Limitations and data_quality_log.md); corrected figures: 198.77 (2008), 190.45 (2009), 105.09 (2010).
 - `12c_pmpm_validation.sql` — Independent validation of `12b` via a structurally different query path; surfaced the zero-coverage exclusion gap (~$486K in 2010 alone) that `12b`'s KNOWN LIMITATION note documents
 - `12d_coverage_claims_contradiction_check.sql` — Tests whether zero-coverage member-years have paid inpatient claims; see Limitations
 
@@ -133,10 +133,13 @@ loaded as 0), with the reasoning for each decision.
   transfer or planned-readmission exclusions (unlike CMS HRRP methodology)
 - National benchmark (Definitive Healthcare, 2025) is drawn from a subset (4,100 of ~9,000 US hospitals) in a commercial dataset; the source article does not describe the sampling methodology, so geographic or other representativeness cannot be confirmed.  
 - Results of high-utilizer flagging reveal that multiple diagnosis and procedure codes in DE-SynPUF do not reflect believable clinical patterns — consistent with synthetic data limitations. Predictive modeling using diagnosis-procedure code clusters should be reserved for real claims data.
-- True PMPM (`12b_true_pmpm.sql`) uses `BENE_HI_CVRAGE_TOT_MONS` as the member-months denominator, but its LEFT JOIN + HAVING filter silently excludes members with zero coverage months from both numerator and denominator. Investigation (`12c`, `12d_coverage_claims_contradiction_check.sql`) found this exclusion drops real paid inpatient claims — $4.76M across 2008-2010 — that shouldn't exist if zero coverage genuinely meant zero eligibility. Both fields (`BENE_HI_CVRAGE_TOT_MONS`, `CLM_PMT_AMT`) were verified against the official CMS codebook before treating this as valid. CMS states DE-SynPUF variables are synthetically imputed/coarsened for disclosure protection, so this may be a synthetic-data artifact rather than a real processing error. Root cause of the zero-coverage population is still open (see `02b`, `02c`).
+
+- True PMPM (`12b_true_pmpm.sql`) originally used `BENE_HI_CVRAGE_TOT_MONS` as the member-months denominator with a `HAVING member_months > 0` filter that silently excluded zero-coverage members from both numerator and denominator, based on a flawed belief that those rows were deaths. Only 307 of 18,854 zero-coverage rows (1.6%) actually have a death date. The filter was removed on 09/27/26 (see `data_quality_log.md`); corrected PMPM figures are 198.77 (2008), 190.45 (2009), 105.09 (2010). Root cause of the zero-coverage population itself is still open (see `02b`, `02c`, `12d_coverage_claims_contradiction_check.sql`).
+
 - The high-utilizer flagging filter in files 13a_high_utilizer_flagging and 13b_high_utilizer_first_claim utilizes the ROW_NUMBER() window function instead of PERCENT_RANK() in order to deterministically produce approximately 5% of high utilizers per year. Due to this methodology, ties at the cutoff boundary are broken by patient ID, meaning members with identical claim counts near the threshold may be arbitrarily included or excluded.
 - The HRRP condition mapping (`09_icd9_frequency_by_hrrp_condition.sql`, `11_hrrp_condition_readmission_rates.sql`) uses a single leading ICD-9 prefix per condition (e.g. `428%` for Heart Failure) as a simplified proxy. This simplification has not been validated against any official CMS specification of condition-defining diagnosis codes.
 - The principal-diagnosis field choice for HRRP condition mapping is sourced to Suter et al. (2014) for AMI, Heart Failure, and Pneumonia only; that study does not cover COPD, so the same field choice is applied to COPD by extension, without separate citation support.
+
 
 
 ## Data Source

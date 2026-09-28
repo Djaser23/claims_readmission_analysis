@@ -108,4 +108,21 @@ support the field choice for COPD.
   code under each field (e.g. 43491: 761 admissions under admitting vs. 1064 under principal) — read as admission-time impression vs. discharge-confirmed-diagnosis divergence.
 - Decision: keep both queries. A dedicated future query will quantify how often
   the two fields disagree on the same claim, with ICD-9 codes mapped to
-  human-readable diagnosis names — tracked separately, not folded into 10/10b.  
+  human-readable diagnosis names — tracked separately, not folded into 10/10b.
+
+## PMPM Zero-Coverage Exclusion Bug Fix — 09/27/26
+- Bug: `12b_true_pmpm.sql`'s `HAVING member_months > 0` filter silently
+  excluded zero-coverage members from both numerator and denominator.
+  The filter assumed those rows were all deaths, based on a flawed
+  death check that treated empty-string death dates as present rather
+  than missing.
+- Finding: only 307 of 18,854 zero-coverage rows (1.6%) actually have
+  a recorded death date — consistent with the 09/20/26 contradiction
+  check, which found the same thing independently.
+- Fix: removed the `HAVING member_months > 0` filter.
+- Impact: all three years shift upward and now reconcile against 12c:
+  2008: 196.95 → 198.77
+  2009: 188.96 → 190.45
+  2010: 104.71 → 105.09
+- Root cause of the zero-coverage rows themselves remains open (see
+  `12d_coverage_claims_contradiction_check.sql`).   
