@@ -29,8 +29,12 @@ explained by member death. That assumption came from a flawed death check (02b)
 that treated empty-string BENE_DEATH_DT values as NULLs. Corrected, only 307 of
 18,854 zero-coverage rows (~1.6%) actually had a death date — the filter had been
 silently excluding ~$486K in real 2010 inpatient claims with no valid justification.
-The filter has been removed; zero-coverage members are now included in both
-numerator and denominator. All three years now reconcile exactly against 12c:
+
+The filter has been removed; claims from zero-coverage members are now
+included in the numerator. These members contribute 0 months to the
+denominator, so this slightly inflates PMPM (see 12d).
+
+All three years now reconcile exactly against 12c:
 2008: 198.77 (was 196.95)
 2009: 190.45 (was 188.96)
 2010: 105.09 (was 104.71)

@@ -8,23 +8,30 @@ year-level join between beneficiary_summary and inpatient_claims totals.
 Purpose: confirm 12b's claims-side aggregation and date filtering are
 correct by reconstructing the same totals through an independent path.
 
-RESULT: This query's totals do NOT match 12b_true_pmpm.sql exactly.
-2010: this query = 105.09 pmpm, 12b = 104.71 pmpm.
+RESULT: This query's totals originally did NOT match 12b_true_pmpm.sql.
+2010: this query = 105.09 pmpm, 12b (pre-fix) = 104.71 pmpm.
+12b was fixed 09/27/26. Both queries now give matching PMPM for all
+three years (2008, 2009, 2010), including 105.09 for 2010.
+
 Traced the gap to 12b's LEFT JOIN + HAVING member_months > 0, which
-silently drops ~$486K in inpatient claims (2010 alone) when a
+silently dropped ~$486K in inpatient claims (2010 alone) when a
 member's BENE_HI_CVRAGE_TOT_MONS = 0 -- because their mem_month_cte
-row is filtered out before the join, so their claims never find a
-match (~34 members affected in 2010). This query does NOT apply that
-same filter, so those claims are included here but excluded in 12b.
+row was filtered out before the join, so their claims never found a
+match (~34 members affected in 2010). This query never applied that
+filter, so those claims were included here but were excluded in 12b
+before the 09/27/26 fix.
 
 That filter was originally written on the assumption that zero-coverage
 rows were explained by member death (see 02b, Finding 2). That assumption
-was WRONG, caused by a hidden bug in the original death check (BENE_DEATH_DT
-IS NOT NULL alone missed that the field stores empty strings for rows with
-no recorded death date). Corrected check: of 18,854 zero-coverage rows,
-only 307 (~1.6%) have a real death date; the remaining ~98% are
-unexplained as of 2026-09-18. See 12b_true_pmpm.sql's own KNOWN LIMITATION
-note for the full explanation and open follow-up.
+was WRONG, caused by a hidden bug in the original death check
+(BENE_DEATH_DT IS NOT NULL alone missed that the field stores empty
+strings for rows with no recorded death date).
+
+Corrected check: of 18,854 zero-coverage rows, only 307 (~1.6%) have a
+real death date; the remaining ~98% are unexplained as of 2026-09-18.
+Root cause is still open. See 12d_coverage_claims_contradiction_check.sql
+for per-year claim totals tied to zero-coverage member-years, and
+12b_true_pmpm.sql's BUG HISTORY note for the full explanation.
 */
 
 WITH MM AS (

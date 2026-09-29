@@ -7,12 +7,12 @@ Finding 1 - this impacts 5.49% of rows in the data
 Finding 2 [CORRECTED] - originally reported as "entirely explained by member
 deaths." That was wrong: BENE_DEATH_DT also stores empty strings ('') for living
 members in addition to true NULLs, so the original `IS NOT NULL` check treated
-even the empty string rows as non-null and passed everything through as "Died." Re-run with
-an empty-string-aware check: of the 18,854 zero-coverage rows, only 307
-(~1.6%) have a real death date. The remaining ~98% (18,547 rows) have no
-death date at all -- root cause unresolved as of 2026-09-18. This bug also
-affected 12b_true_pmpm.sql's filter design; see that file's KNOWN LIMITATION
-note.
+even the empty string rows as non-null and passed everything through as "Died." 
+Re-run with an empty-string-aware check: of 18,854 zero-coverage rows, only 307 (~1.6%) have a
+real death date; the remaining ~98% are unexplained as of 2026-09-18.
+Root cause is still open. See 12d_coverage_claims_contradiction_check.sql
+for per-year claim totals tied to zero-coverage member-years, and
+12b_true_pmpm.sql's BUG HISTORY note for the full explanation.
 */
 
 -- Section 1: percentage of missingness

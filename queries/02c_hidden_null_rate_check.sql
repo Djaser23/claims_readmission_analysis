@@ -20,7 +20,7 @@ the zero-coverage group -- it's simply the default representation for any
 living beneficiary, table-wide. This rules out death-date patterns as an
 explanation for the zero-coverage rows and confirms the root cause of
 BENE_HI_CVRAGE_TOT_MONS = 0 for non-decedents remains unresolved (see
-02b and 12b_true_pmpm.sql's KNOWN LIMITATION note).
+02b and 12b_true_pmpm.sql's BUG HISTORY note).
 */
 
 -- Section 1: empty-string rate within the zero-coverage group
