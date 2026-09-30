@@ -13,7 +13,7 @@
   Decision: write an accompanying query excluding 1-day readmissions. The difference between the two counts is 292, approximately 4.5% of total 30-day readmission occurrences.
 - Known limitation: data censoring — discharge dates within the last 30 days of the dataset preclude the possibility of observing a 30-day readmission for those claims.
   Decision: create a CTE-based filter to remove that subset and get accurate readmission rates.
-- 324 discharges (0.49%) fell within 30 days of the observation window end date (2010-12-31) and were excluded from readmission rate calculations due to censoring. Minimal impact on analysis.
+- 324 discharges (0.49%) fell within 30 days of the latest discharge date in the data (2010-12-31) and were excluded from readmission rate calculations due to censoring. Minimal impact on analysis.
 - Results of query `13_high_utilizer_flagging` reveal that the multiple diagnosis and procedure codes do not contain believable clinical patterns. The results appear to be a random data artifact of the synthetic data creation process.
   Decision: acknowledge and suggest that predictive modeling using multiple diagnosis-procedure codes should be limited to real claims data such as available on BigQuery.
 
@@ -46,9 +46,10 @@
 - Replaced admitting diagnosis code (ADMTNG_ICD9_DGNS_CD) with principal discharge diagnosis code (ICD9_DGNS_CD_1) in queries 09 and 11, per CMS HRRP cohort methodology (Suter et al., 2014).
 - Recomputing shifted rates by ≤0.5 percentage points across all four conditions; no substantial change to the overall finding that observed rates fall substantially below national benchmarks.
 - Decision: updated README HRRP table and Methods section with corrected rates and field justification; added citation to References.
+- [Corrected 09/29/26] The field choice follows Suter et al. (2014) for AMI, HF and pneumonia only, not COPD (see 09/07/26). "Substantially below" was unhedged: the current comparison is informal, with 95% CIs entirely below the published benchmarks and no formal test.
 
 ## Query 10 Readmission Count Fix — 09/04/26
-- Bug: 10_readmission_rate_by_icd9.sql's HAVING clause reconstructed readmission counts via `readmission_rate * total_admissions`, using an already-rounded rate (3 decimal places). Rounding error could push a diagnosis code across the n≥10 CLT reliability threshold incorrectly.
+- Bug: 10_readmission_rate_by_icd9.sql's HAVING clause reconstructed readmission counts via `readmission_rate * total_admissions`, using an already-rounded rate (3 decimal places). Rounding error could push a diagnosis code across the minimum-count reliability threshold (at least 10 readmissions and 10 non-readmissions) incorrectly.
 - Fix: Added a direct `SUM(CASE WHEN readmission_class = 'thirty_day_readmission' THEN 1 ELSE 0 END) AS readmission_count` column alongside the existing rounded rate; updated HAVING to filter on `readmission_count >= 10 AND total_admissions - readmission_count >= 10`. Same pattern as 06_readmission_by_drg.sql.
 - Verified via `10_readmission_rate_by_icd9_validation.sql`: found 7 false-negative diagnosis codes, all with `readmission_count` exactly equal to 10 — the true count cleared the threshold, but the rounded rate multiplied back through `total_admissions` fell just under it in each case. No false positives found. Fix expands the set of admitting diagnosis codes included in the 30-day readmission results by 7 codes.
 - Applied to: `10_readmission_rate_by_icd9.sql`.
@@ -82,8 +83,8 @@ support the field choice for COPD.
   cross-validating the pattern.
 - Ruled out death date as the explanation: only 307 of 18,854 zero-coverage rows 
   (1.6%) have a recorded death date; the empty-string death-date rate within the 
-  zero-coverage group (98.37%) is statistically indistinguishable from the 
-  table-wide rate (98.41%, see 02c), meaning death-date patterns don't explain 
+  zero-coverage group (98.37%) is nearly identical to the table-wide 
+  rate (98.41%, see 02c; no formal test), meaning death-date patterns don't explain 
   why this group has zero coverage.
 - Caveat: CMS states DE-SynPUF variables are imputed/coarsened for disclosure 
   protection, so this may be a synthetic-data artifact rather than a real 
@@ -94,7 +95,7 @@ support the field choice for COPD.
 ## Query 10 vs 10b — Admitting vs. Principal Diagnosis Comparison — 09/21/26
 - Long-open question (flagged 09/04/26): whether 10_readmission_rate_by_icd9.sql
   should switch from admitting diagnosis to principal diagnosis, matching the
-  09/16/26 fix applied to queries 09 and 11.
+  08/16/26 fix applied to queries 09 and 11.
 - Resolution: not a bug. Admitting diagnosis (available early, at intake) and
   principal diagnosis (confirmed at discharge, CMS-standard for HRRP methodology)
   are two deliberately distinct, both-valid analytical framings — not one field
@@ -104,7 +105,7 @@ support the field choice for COPD.
   both fields (e.g. pneumonia/486: 250/2353 admitting vs. 251/2442 principal) —
   consistent with admitting and principal diagnosis converging for conditions
   usually confirmed at intake. Others diverge substantially, both in which codes
-  clear the n≥10 reliability threshold and in total admission volume for the same
+  clear the minimum-count reliability threshold and in total admission volume for the same
   code under each field (e.g. 43491: 761 admissions under admitting vs. 1064 under principal) — read as admission-time impression vs. discharge-confirmed-diagnosis divergence.
 - Decision: keep both queries. A dedicated future query will quantify how often
   the two fields disagree on the same claim, with ICD-9 codes mapped to
@@ -124,5 +125,12 @@ support the field choice for COPD.
   2008: 196.95 → 198.77
   2009: 188.96 → 190.45
   2010: 104.71 → 105.09
+- Note: claims from zero-coverage members now enter the numerator while contributing 0 months to the denominator, which slightly inflates PMPM (~$4.76M across 2008–2010, see 12d).
 - Root cause of the zero-coverage rows themselves remains open (see
-  `12d_coverage_claims_contradiction_check.sql`).   
+  `12d_coverage_claims_contradiction_check.sql`).
+
+## Documentation Consistency Pass — 09/29/26
+- Updated the pointers in 02b, 02c and 12c from "KNOWN LIMITATION" to 12b's "BUG HISTORY" note; the 12c header now says the totals originally differed and now reconcile with 12b for 2008–2010.
+- 12b comment now records that zero-coverage claims sit in the numerator with 0 months in the denominator.
+- File 11 and README: replaced "well below / substantially below" with CI-comparison wording (informal, no formal test); separated the Suter et al. field-choice citation from the unvalidated ICD-9 prefix mapping; relabeled the n×p ≥ 10 filter as a "minimum-count reliability filter."
+- Corrected the 09/21 entry's date reference for the diagnosis-field fix (09/16/26 → 08/16/26).
