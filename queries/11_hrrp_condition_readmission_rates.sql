@@ -6,8 +6,8 @@ Coronary Artery Bypass Graft (CABG) Surgery and
 Elective Primary Total Hip Arthroplasty and/or Total Knee Arthroplasty (THA/TKA)
 have been excluded because they are identified by procedure codes, not diagnosis codes.
 
-Rates are expressed as percentages. Censoring correction applied — discharges within 
-30 days of the observation window end (2010-12-31) are excluded.
+Rates are expressed as percentages. Censoring correction applied — discharges within 30 
+days of the latest discharge date in the data are excluded.
 
 2010 national benchmark rates for comparison (BMJ Open, 2024 — PMC11367292):
   Heart Failure: 24.8%
@@ -15,19 +15,20 @@ Rates are expressed as percentages. Censoring correction applied — discharges 
   COPD:          20.8%
   AMI:           15.6%
 
-All four observed rates are substantially lower than national benchmarks (See README 
-for Full Discussion)
+Comparison with the 2010 benchmarks is informal: for all four conditions the
+95% CI (computed downstream in hrrp_condition_readmission_analysis.ipynb)
+lies entirely below the published benchmark. No formal test was run, and
+these are synthetic-data rates (see README for full discussion).
 
-Uses ICD9_DGNS_CD_1 (principal discharge diagnosis) per CMS HRRP cohort 
-methodology (Suter et al., see References) — not ADMTNG_ICD9_DGNS_CD.
-Suter et al. supports this field choice for AMI, Heart Failure, and Pneumonia;
-that study does not address COPD.
+Uses ICD9_DGNS_CD_1 (principal discharge diagnosis), not ADMTNG_ICD9_DGNS_CD.
+This field choice follows Suter et al. (2014, see References) for AMI, Heart
+Failure, and Pneumonia; that study does not address COPD, so the same field is
+applied to COPD by extension, without separate citation support.
 
-This mapping uses a single leading ICD-9 prefix per condition as a simplified proxy
-for demonstration purposes. This simplification has not been validated against any
-official CMS specification of condition-defining diagnosis codes.
+The ICD-9 prefix mapping (one leading prefix per condition, used as a proxy)
+is a simplification not validated against any official CMS code list.
 
-readmission_count added on 9/8/26 to support Wilson 95% CI computation
+Readmission_count added on 9/8/26 to support Wilson 95% CI computation
 downstream (avoids reconstructing from the rounded readmission_rate —
 see data_quality_log.md).
 */
