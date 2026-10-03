@@ -134,3 +134,21 @@ support the field choice for COPD.
 - 12b comment now records that zero-coverage claims sit in the numerator with 0 months in the denominator.
 - File 11 and README: replaced "well below / substantially below" with CI-comparison wording (informal, no formal test); separated the Suter et al. field-choice citation from the unvalidated ICD-9 prefix mapping; relabeled the n×p ≥ 10 filter as a "minimum-count reliability filter."
 - Corrected the 09/21 entry's date reference for the diagnosis-field fix (09/16/26 → 08/16/26).
+
+## Strict vs. Inclusive 30-Day Readmission Definition — 10/01/26
+The readmission queries (06, 06b) use discharge-to-next-admission gap length to 
+classify readmissions. The original definition (06) counts any admission within 
+30 days of discharge as a readmission ("lax" — gap > 0 days). A stricter version 
+(06b) excludes admissions occurring exactly 1 day after discharge, on the 
+assumption that same-day/next-day admissions are more likely to represent 
+transfers than true readmissions (gap > 1 day).
+
+06c compares DRG-level reliability (n >= 10 readmissions and n >= 10 
+non-readmissions) under both definitions: 256 DRGs pass under the lax 
+definition vs. 243 under the strict definition — a 13-DRG difference.
+
+Note: this 1-day exclusion is a working assumption, not CMS's actual 
+planned-readmission methodology. CMS's algorithm classifies planned 
+readmissions using procedure and diagnosis codes, not a time-gap cutoff 
+(source cited in 06c). Readers should treat the strict/lax distinction here 
+as an internal robustness check, not a CMS-aligned definition.
