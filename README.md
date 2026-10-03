@@ -2,6 +2,8 @@
 
 SQL-based analysis of 66,773 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against a national readmission benchmark.
 
+> **Caveat:** DE-SynPUF is a synthetic dataset. Conclusions illustrate the method and are not real-world findings.
+
 ## Research Questions
 
 Which diagnosis groups drive 30-day readmissions in this Medicare
@@ -40,7 +42,7 @@ For all 4 HRRP conditions, the observed rate's 95% CI lies entirely below the pu
 | COPD | 20.8% | 9.8% | 8.58–11.17% | -11.0 |
 | AMI | 15.6% | 9.9% | 8.51–11.40% | -5.7 |
 
-*Observed rates are from synthetic data; national benchmark rates are from Rachoin et al. (2024) for 2010. Synthetic data limitations apply — see Limitations section.*
+*National benchmark rates are from Rachoin et al. (2024) for 2010.*
 
 ## Synthesis: Reconciling DRG-Level and HRRP-Level Findings
 The two headline findings above appear to point in different directions: the top 5 DRGs by readmission rate are non-cardiac (hematologic, urologic, orthopedic, immunologic, neurologic), while the four HRRP-tracked conditions — the specific diagnoses CMS's readmission reduction program is built around — all show 95% CIs lying entirely below national benchmarks (an informal comparison, not a formal test). Read at face value, this suggests HRRP's named conditions may not be the actual readmission drivers in this population. That reading should be treated as a hypothesis, not a conclusion. The DRG-level result is undercut by its own uncertainty: all five top-DRG 95% confidence intervals overlap the 14.67% national benchmark (see Key Findings), meaning none are statistically distinguishable from average at this sample size (n=57–80). The HRRP-level result is on firmer ground — CIs are 6–10x narrower with no overlap — so this isn't two weak signals canceling out, but a fragile small-n signal against a solid one. The remaining gap: the two benchmarks aren't directly comparable — DRG-level checks against an all-cause crude rate (Definitive Healthcare, 2025), HRRP-level against condition-specific crude rates (Rachoin et al., 2024)
@@ -48,7 +50,7 @@ The two headline findings above appear to point in different directions: the top
 Given that mismatch and the synthetic data, this analysis still can't confidently claim HRRP's targeted conditions are misaligned with this population's risk — but the pattern is better supported than the DRG-level result alone suggests, and worth checking against real claims data in V2.
 
 ## Decision Implications
-**Note: These implications are directional only — DE-SynPUF synthetic data does not support production-level conclusions. V2 on real CMS Medicare data via BigQuery is planned.**
+*Directional only (synthetic data). V2 on real CMS Medicare data via BigQuery is planned.*
 
 If applied to real claims data, this analysis would enable:
 - Care management targeting — high-utilizer flagging identifies the top 5% of admitted members by claims per member per year, enabling health plans to prioritize outreach and case management resources toward the highest-cost patients
@@ -132,7 +134,7 @@ Uses the same minimum-count reliability filter (at least 10 readmissions and 10 
 
 ## Data Quality
 
-All data decisions are documented in [`data_quality_log.md`](data_quality_log.md),
+All data decisions are documented in `data_quality_log.md`,
 including handling of dates stored as YYYYMMDD strings, blank deductible
 amounts (3.26% loaded as 0), and blank utilization day counts (3.5%
 loaded as 0), with the reasoning for each decision.
