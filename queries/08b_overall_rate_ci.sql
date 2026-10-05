@@ -2,12 +2,15 @@
 This query computes the 95% confidence interval for the overall admission rate 
 calculated in 08_overall_readmission_rate
 
-n = 66,449
+n = 66,382
 rate = 0.0967
 se = square root of (p(1-p)/n)
 95% confidence interval = 1.96 x se
 
 Result: 9.67% (95% CI: 9.45% - 9.89%)
+
+Updated 10/05/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). n 66,449 -> 66,382.
 */
 
 
@@ -21,6 +24,7 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, CLM_DRG_CD,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
+  WHERE SEGMENT = 1
 )
 
 ,CTE2_filtered AS (
