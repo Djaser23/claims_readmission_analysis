@@ -11,6 +11,9 @@ Results indicate that the original filter produced 7 false negatives, resulting 
 of statistical significance, with a readmission_count of exactly 10. For these 7 diagnosis 
 codes specifically, rounding happened to move the rate downward, causing it to fall just 
 under the threshold and evade capture.
+
+Updated 10/05/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). Segment-2 rows no longer enter the admission sequence.
 */
 
 
@@ -23,6 +26,7 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ADMTNG_ICD9_DGNS_CD,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
+  WHERE SEGMENT = 1
 )
 ,CTE2_filtered AS (
   SELECT * FROM CTE2
