@@ -6,6 +6,9 @@ The reason for this filter it to ensure a more accurate readmission rate which
 uses total admissions in its calculation.
 */
 
+-- 2026-10-05: added SEGMENT = 1 (see 02d). Before: 6,423 / 66,449 (9.67%).
+-- After: 6,421 / 66,382 (9.67%).
+
 WITH censored_data_filter AS (
 SELECT
 DATE_SUB(STR_TO_DATE(MAX(NCH_BENE_DSCHRG_DT), '%Y%m%d'), INTERVAL 30 DAY) 
@@ -16,6 +19,7 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, CLM_DRG_CD,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
+  WHERE SEGMENT = 1
 )
 
 ,CTE2_filtered AS (
