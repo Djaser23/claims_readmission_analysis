@@ -16,6 +16,9 @@ This was due to the fact that the readmission_rate utilized rounding in its cons
 is that any variable feeding into a HAVING or WHERE clause should be in raw count form, not a rounded 
 or derived rate, in order to preserve sufficient statistical accuracy.
 For a more detailed account of the difference in results of these queries see '10_readmission_rate_by_icd9_validation.sql'
+
+Updated 10/05/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). Segment-2 rows no longer enter the admission sequence.
 */
 
 
@@ -30,7 +33,7 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ADMTNG_ICD9_DGNS_CD,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
- 
+  WHERE SEGMENT = 1
 )
 ,CTE2_filtered AS (
   SELECT * FROM CTE2
