@@ -5,6 +5,9 @@ This version contrasts the predictive framing of the admitting diagnosis
 code on 10_readmission_rate_by_icd9.sql in favor of a more standard approach 
 to the rate using principal diagnosis code. Both approaches have analytical 
 value and so both are explored.
+
+Updated 10/06/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). Segment-2 rows no longer enter the admission sequence.
 */
 
 
@@ -19,6 +22,7 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ICD9_DGNS_CD_1,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
+  WHERE SEGMENT = 1
  
 )
 ,CTE2_filtered AS (
