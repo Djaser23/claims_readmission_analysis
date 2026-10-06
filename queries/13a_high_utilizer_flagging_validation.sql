@@ -1,11 +1,15 @@
 -- validates ranked_members/high_utilizers CTEs give exactly the cutoff count per year
+-- Updated 10/06/26: added SEGMENT = 1 in full_years (see 02d).
+-- Segment-2 rows no longer count toward per-member claim totals.
+
 
 WITH full_years AS (
 SELECT DESYNPUF_ID, CLM_ID, CLM_FROM_DT, CLM_THRU_DT, CLM_PMT_AMT,
 LEFT(CLM_FROM_DT, 4) AS claim_year
 FROM inpatient_claims
 WHERE STR_TO_DATE(CLM_FROM_DT, '%Y%m%d') >= '2008-01-01' AND
-STR_TO_DATE(CLM_THRU_DT, '%Y%m%d') < '2011-01-01')
+STR_TO_DATE(CLM_THRU_DT, '%Y%m%d') < '2011-01-01'
+AND SEGMENT = 1)
 
 , member_claims_per_yr AS (
 SELECT claim_year, DESYNPUF_ID, COUNT(CLM_ID) AS claims_per_year
