@@ -3,6 +3,9 @@ Adds diagnosis descriptions to the readmission-rate-by-principal-code
 results from 10b_readmission_rate_by_icd9_principal.sql, joining
 against icd9_dx_lookup (CMS v28) for readability.
 LEFT JOIN used so codes without a v28 match still appear in output.
+
+Updated 10/06/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). Segment-2 rows no longer enter the admission sequence.
 */
 
 WITH censored_data_filter AS (
@@ -16,6 +19,7 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ICD9_DGNS_CD_1,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
+  WHERE SEGMENT = 1
  
 )
 ,CTE2_filtered AS (
@@ -43,7 +47,6 @@ FROM CTE3
 GROUP BY ICD9_DGNS_CD_1
 HAVING readmission_count >= 10 AND -- filters out statistically unreliable rates
 total_admissions - readmission_count >= 10
-ORDER BY readmission_rate DESC
 )
 SELECT 
 	C.ICD9_DGNS_CD_1, 
@@ -54,4 +57,5 @@ SELECT
 FROM CTE4 C
 LEFT JOIN icd9_dx_lookup i ON
 C.ICD9_DGNS_CD_1 = i.icd9_code
+ORDER BY C.readmission_rate DESC;
 
