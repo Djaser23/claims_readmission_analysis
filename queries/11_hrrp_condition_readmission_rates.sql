@@ -31,6 +31,9 @@ is a simplification not validated against any official CMS code list.
 Readmission_count added on 9/8/26 to support Wilson 95% CI computation
 downstream (avoids reconstructing from the rounded readmission_rate —
 see data_quality_log.md).
+
+Updated 10/06/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). Segment-2 rows no longer enter the admission sequence.
 */
 
 
@@ -45,6 +48,7 @@ FROM inpatient_claims)
 SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, ICD9_DGNS_CD_1,
 LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
 FROM inpatient_claims
+WHERE SEGMENT = 1
 )
 
 ,CTE2_filtered AS (
