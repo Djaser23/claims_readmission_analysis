@@ -14,6 +14,10 @@ LIMITATION: Ties at the cutoff boundary are broken by DESYNPUF_ID for
 reproducibility -- members tied with the cutoff person on claims_per_year
 may be arbitrarily included or excluded depending on ID order. This is a
 known, documented limitation, not a bug.
+
+Updated 10/06/26: added SEGMENT = 1 in full_years and inpatient_cte (see 02d).
+Segment-2 rows no longer count toward per-member claim totals and cannot
+be selected as a member's first admission of the year.
 */
 
 -- first cte filters out the partial year data from 2007
@@ -22,7 +26,8 @@ SELECT DESYNPUF_ID, CLM_ID, CLM_FROM_DT, CLM_THRU_DT, CLM_PMT_AMT,
 LEFT(CLM_FROM_DT, 4) AS claim_year
 FROM inpatient_claims
 WHERE STR_TO_DATE(CLM_FROM_DT, '%Y%m%d') >= '2008-01-01' AND
-STR_TO_DATE(CLM_THRU_DT, '%Y%m%d') < '2011-01-01')
+STR_TO_DATE(CLM_THRU_DT, '%Y%m%d') < '2011-01-01'
+AND SEGMENT = 1)
 
 -- second cte calculates the per member claim count per year
 , member_claims_per_yr AS (
@@ -64,7 +69,8 @@ ROW_NUMBER() OVER (
   PARTITION BY DESYNPUF_ID, LEFT(CLM_FROM_DT, 4)
   ORDER BY CLM_FROM_DT
 ) AS claim_order
-FROM inpatient_claims)
+FROM inpatient_claims
+WHERE SEGMENT = 1)
 
 /*
 final query joins the top-5% members to their first admission's diagnosis
