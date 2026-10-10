@@ -1,30 +1,28 @@
 /*
 30 Day Readmission Rate by DRG
-Includes single day intervals since discharge
-This may capture planned transfers.
-This query filters out discharges within the last 30 days of the data
-to avoid including rows where a 30 day readmission rate is impossible.
-The reason for this filter is to ensure a more accurate readmission rate which
-uses total admissions in its calculation.
-Volume thresholds for rate accuracy have been accounted for by filtering out DRGs 
-where the readmission count is less than ten or the non-readmission count 
-(total admissions minus readmissions) is less than ten — a practice that 
-reflects the use of the Central Limit Theorem in the context of rates.
-HAVING readmission_count >= 10 AND -- filters out statistically unreliable rates
-total_admissions - readmission_count >= 10
-Note: readmission_rate and total_admissions here are point estimates. 
-95% confidence intervals (Wilson) are computed downstream in 
-readmission_analysis.ipynb using readmission_count and total_admissions as inputs, 
+Includes readmissions one day after discharge (lax definition).
+
+A portion of single-day-gap readmissions are likely transfers between facilities
+rather than true readmissions; 06b excludes them (strict definition) and 06c
+compares the two.
+
+This query excludes discharges within the last 30 days of the data (censoring
+correction), since a 30-day readmission can't be observed for them; including
+them would understate the rate.
+
+Low-volume DRGs are excluded: a DRG is kept only if it has at least 10 readmissions
+and at least 10 non-readmissions (a minimum-count reliability filter;
+normal-approximation rule of thumb). This reduces, but does not eliminate,
+instability in small-group rates.
+
+Note: readmission_rate and total_admissions here are point estimates.
+95% confidence intervals (Wilson) are computed downstream in
+readmission_analysis.ipynb using readmission_count and total_admissions as inputs,
 prior to any DRG-level ranking or benchmarking.
-These DRG grouped readmission rates are ready for scrutiny given the acknowledgement
-that single day interval readmissions are included which may have been planned transfers.
-A mapping of DRG to expected length of stay is appropriate to determine where 
-inefficiencies may exist within the dataset.
 
 Updated 10/05/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
 (see 02d). Segment-2 rows no longer enter the admission sequence.
 */
-
 
 WITH censored_data_filter AS (
 SELECT
@@ -62,9 +60,9 @@ SELECT
     COUNT(*) AS total_admissions
 FROM CTE3
 GROUP BY CLM_DRG_CD
-HAVING readmission_count >= 10 AND -- filters out statistically unreliable rates
+HAVING readmission_count >= 10 AND -- excludes low-count groups
 total_admissions - readmission_count >= 10
-ORDER BY readmission_rate DESC
+ORDER BY readmission_rate DESC;
 
 
 

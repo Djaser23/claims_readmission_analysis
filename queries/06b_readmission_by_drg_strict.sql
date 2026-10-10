@@ -1,17 +1,21 @@
 /*
 30 Day Readmission Rate by DRG
 Excludes single-day intervals since discharge (strict definition)
-This version excludes potential planned transfers by filtering out admissions within 
-one day of the initial admission date. It also filters out discharge rows within the last 
-30 days of the data to avoid including rows where a 30 day readmission rate is impossible.
-The reason for this filter is to ensure a more accurate readmission rate which
-uses total admissions in its calculation. (censoring correction)
-Volume thresholds for rate accuracy have been accounted for by filtering out DRGs 
-where the readmission count is less than ten or the non-readmission count 
-(total admissions minus readmissions) is less than ten — a practice that 
-reflects the use of the Central Limit Theorem in the context of rates.
-HAVING readmission_count >= 10 AND -- filters out statistically unreliable rates
-total_admissions - readmission_count >= 10
+
+This version excludes readmissions that occur one day or less after discharge,
+because a portion of these are likely transfers between facilities rather than
+true readmissions. The 1-day cutoff is a simplifying assumption, not CMS's
+planned-readmission methodology (see 06c).
+
+It also excludes discharges within the last 30 days of the data (censoring
+correction), since a 30-day readmission can't be observed for them; including
+them would understate the rate.
+
+Low-volume DRGs are excluded: a DRG is kept only if it has at least 10 readmissions
+and at least 10 non-readmissions (a minimum-count reliability filter;
+normal-approximation rule of thumb). This reduces, but does not eliminate,
+instability in small-group rates.
+
 Note: readmission_rate and total_admissions here are point estimates. 
 95% confidence intervals (Wilson) are computed downstream in 
 readmission_analysis.ipynb using readmission_count and total_admissions as inputs, 
@@ -42,7 +46,7 @@ FROM inpatient_claims)
 )
 
 -- This version adds stricter definition of 30 day readmission rate
--- excluding next day readmissions which may include planned transfers
+-- excludes readmissions one day or less after discharge (a portion are likely transfers)
 ,CTE3 AS (
 SELECT 
 CLM_DRG_CD, NCH_BENE_DSCHRG_DT, next_admission, 
