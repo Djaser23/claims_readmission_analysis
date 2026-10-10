@@ -16,6 +16,9 @@ Note: readmission_rate and total_admissions here are point estimates.
 95% confidence intervals (Wilson) are computed downstream in 
 readmission_analysis.ipynb using readmission_count and total_admissions as inputs, 
 prior to any DRG-level ranking or benchmarking.
+
+Updated 10/09/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). Segment-2 rows no longer enter the admission sequence.
 */
 
 
@@ -29,6 +32,7 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, CLM_DRG_CD,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
+  WHERE SEGMENT = 1
  
 )
 ,CTE2_filtered AS (
