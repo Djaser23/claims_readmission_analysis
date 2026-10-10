@@ -8,6 +8,10 @@ utilizing diagnosis and procedure codes to determine planned readmissions.
 Source: 
 https://hscrc.maryland.gov/documents/HSCRC_Initiatives/readmissions/
 Version-2-1-Readmission-Planned-CMS-Readmission-Algorithm-Report-03-14-2013.pdf
+
+Updated 10/09/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
+(see 02d). Segment-2 rows no longer enter the admission sequence;
+counts unchanged at 256 (lax) / 243 (strict).
 */
 
 WITH censored_data_filter AS (
@@ -20,6 +24,8 @@ FROM inpatient_claims)
   SELECT DESYNPUF_ID, CLM_ADMSN_DT, NCH_BENE_DSCHRG_DT, CLM_DRG_CD,
   LEAD(CLM_ADMSN_DT) OVER (PARTITION BY DESYNPUF_ID ORDER BY CLM_ADMSN_DT) AS next_admission
   FROM inpatient_claims
+  WHERE SEGMENT = 1
+  
  
 )
 ,CTE2_filtered AS (
