@@ -1,18 +1,20 @@
 /*
-This query computes the 95% confidence interval for the overall admission rate 
-calculated in 08_overall_readmission_rate
+This query computes the 95% confidence interval for the overall 30-day
+readmission rate calculated in 08_overall_readmission_rate.sql
+(normal approximation).
 
 n = 66,382
-rate = 0.0967
+rate = 0.0967 (6,421 / 66,382 = 0.09673, rounded to 4 places in the query)
 se = square root of (p(1-p)/n)
-95% confidence interval = 1.96 x se
+95% confidence interval = rate +/- 1.96 x se
 
 Result: 9.67% (95% CI: 9.45% - 9.89%)
+The interval is computed from the rounded rate (0.0967). With the unrounded
+rate the upper bound is about 9.898%, which would round to 9.90%.
 
 Updated 10/05/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
 (see 02d). n 66,449 -> 66,382.
 */
-
 
 WITH censored_data_filter AS (
 SELECT

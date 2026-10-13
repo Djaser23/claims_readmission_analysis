@@ -185,3 +185,8 @@ See 02e_segment_payment_check.sql.
 - Decision: treated as additional payments, not duplicates. 12, 12b, 12c, 12d unchanged.
   The 9 identical-payment rows could be duplicates; impact is negligible.
 - Note: one row has a segment-2 payment of $700 vs. parent $7,000 (not investigated).
+
+## SEGMENT = 1 Applied to 14 (ICD-9 lookup match rate) — 10/13/26
+- 14_icd9_lookup_match_rate.sql runs on one row per claim (SEGMENT = 1), as 10d does.
+  Totals 66,773 -> 66,705. Mapped counts unchanged (65,483 admitting, 66,456 principal): the 68 continuation rows have blank codes and never matched the lookup.
+  Match rates 98.07% -> 98.17% (admitting) and 99.53% -> 99.63% (principal).
