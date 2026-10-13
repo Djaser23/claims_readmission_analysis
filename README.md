@@ -1,6 +1,6 @@
 # 30-Day Readmission Analysis — CMS Medicare Claims (DE-SynPUF)
 
-SQL-based analysis of 66,773 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against a national readmission benchmark.
+SQL-based analysis of 66,705 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against a national readmission benchmark. The inpatient file has 66,773 rows; 68 are continuation lines of existing claims (SEGMENT = 2), which are excluded from the readmission, utilization and diagnosis-code queries and kept in the cost queries (see `02d`, `02e`).
 
 > **Caveat:** DE-SynPUF is a synthetic dataset. Conclusions illustrate the method and are not real-world findings.
 
@@ -13,7 +13,7 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
 
 ## Key Findings
 
-- Overall 30-day readmission rate: **9.67%** across 66,449 index discharges (95% CI 9.45–9.89%, normal approximation)
+- Overall 30-day readmission rate: **9.67%** across 66,382 index discharges (95% CI 9.45–9.89%, normal approximation)
 - National all-cause benchmark: **14.67%** (Definitive Healthcare, 2025; sampling methodology not disclosed — see Limitations)
 - Highest readmission rates: 
 **Coagulation Disorders (DRG 813)** at 22.8%, 
@@ -31,7 +31,7 @@ How do the readmission rates of the target Hospital Readmissions Reduction Progr
   immunologic, and neurologic conditions — no cardiac DRGs appear in the 
   top 5, despite cardiac conditions being the primary focus of CMS HRRP readmission reduction programs.
 
-- Note: Unlike the DRG-level result above, none of the 4 HRRP conditions' 95% confidence intervals overlap their national benchmark — even the upper CI bound stays well below benchmark in every case (e.g. Heart Failure's upper bound of ~11.7% vs. a 24.8% benchmark). Given the much larger per-condition sample sizes (n=1,633–3,132 vs. n=57–80 for the top DRGs), these CIs are roughly 6–10x narrower than the DRG-level CIs above despite using the same underlying claims data — a large enough margin that CI non-overlap serves as a reasonable informal proxy for a real difference, though not a substitute for a formal two-sample test. See uncertainty quantification in Methods.  
+- Note: Unlike the DRG-level result above, none of the 4 HRRP conditions' 95% confidence intervals overlap their national benchmark — even the upper CI bound stays below benchmark in every case (e.g. Heart Failure's upper bound of ~11.7% vs. a 24.8% benchmark). Given the much larger per-condition sample sizes (n=1,633–3,132 vs. n=57–80 for the top DRGs), these CIs are roughly 6–10x narrower than the DRG-level CIs above despite using the same underlying claims data — a large enough margin that CI non-overlap serves as a reasonable informal proxy for a real difference, though not a substitute for a formal two-sample test. See uncertainty quantification in Methods.  
 
 For all 4 HRRP conditions, the observed rate's 95% CI lies entirely below the published benchmark. This is an informal comparison, not a formal test.
 
@@ -45,7 +45,7 @@ For all 4 HRRP conditions, the observed rate's 95% CI lies entirely below the pu
 *National benchmark rates are from Rachoin et al. (2024) for 2010.*
 
 ## Synthesis: Reconciling DRG-Level and HRRP-Level Findings
-The two headline findings above appear to point in different directions: the top 5 DRGs by readmission rate are non-cardiac (hematologic, urologic, orthopedic, immunologic, neurologic), while the four HRRP-tracked conditions — the specific diagnoses CMS's readmission reduction program is built around — all show 95% CIs lying entirely below national benchmarks (an informal comparison, not a formal test). Read at face value, this suggests HRRP's named conditions may not be the actual readmission drivers in this population. That reading should be treated as a hypothesis, not a conclusion. The DRG-level result is undercut by its own uncertainty: all five top-DRG 95% confidence intervals overlap the 14.67% national benchmark (see Key Findings), meaning none are statistically distinguishable from average at this sample size (n=57–80). The HRRP-level result is on firmer ground — CIs are 6–10x narrower with no overlap — so this isn't two weak signals canceling out, but a fragile small-n signal against a solid one. The remaining gap: the two benchmarks aren't directly comparable — DRG-level checks against an all-cause crude rate (Definitive Healthcare, 2025), HRRP-level against condition-specific crude rates (Rachoin et al., 2024)
+The two headline findings above appear to point in different directions: the top 5 DRGs by readmission rate are non-cardiac (hematologic, urologic, orthopedic, immunologic, neurologic), while the four HRRP-tracked conditions — the specific diagnoses CMS's readmission reduction program is built around — all show 95% CIs lying entirely below national benchmarks (an informal comparison, not a formal test). Read at face value, this suggests HRRP's named conditions may not be the actual readmission drivers in this population. That reading should be treated as a hypothesis, not a conclusion. The DRG-level result is undercut by its own uncertainty: all five top-DRG 95% confidence intervals overlap the 14.67% national benchmark (see Key Findings), meaning none are statistically distinguishable from average at this sample size (n=57–80). The HRRP-level result is on firmer ground — CIs are 6–10x narrower with no overlap — so this isn't two weak signals canceling out, but a fragile small-n signal against a solid one. The remaining gap: the two benchmarks aren't directly comparable — DRG-level checks against an all-cause crude rate (Definitive Healthcare, 2025), HRRP-level against condition-specific crude rates (Rachoin et al., 2024).
 
 Given that mismatch and the synthetic data, this analysis still can't confidently claim HRRP's targeted conditions are misaligned with this population's risk — but the pattern is better supported than the DRG-level result alone suggests, and worth checking against real claims data in V2.
 
@@ -62,7 +62,9 @@ for the zero-coverage caveat).
 - HRRP Benchmark monitoring: Tracking of CMS Hospital Readmissions Reduction Program (HRRP) marked diagnosis codes against published rates informing how the cohort is performing against the known population.
 
 
-![Top 20 DRGs by 30-Day Readmission Rate](images/top20_drg_readmission_rate.png)  
+![Top 20 DRGs by 30-Day Readmission Rate](images/top20_drg_readmission_rate.png) 
+
+*Dashed line: overall 30-day readmission rate in this dataset (9.67%). The 14.67% national benchmark discussed above is context only and is not drawn. Error bars: 95% Wilson CIs. These are the 20 highest rates among DRGs meeting the minimum-count filter, so they tend to overstate true rates.* 
 
 ![HRRP Condition Readmission Rates vs National Benchmarks](images/hrrp_condition_benchmark_comparison.png)
 
@@ -74,10 +76,10 @@ for the zero-coverage caveat).
 - **Readmission flagging:** LEAD() window functions over per-patient
   discharge sequences (CTE-structured), computed two ways — including and
   excluding 1-day gaps — with the tradeoffs documented in query comments
-- **Censoring correction:** Excluded 324 discharges (0.49%) within 30
+- **Censoring correction:** Excluded 323 discharges (0.48%) within 30
   days of the observation window end, since their readmission status is
-  unobservable; naive inclusion understates the true rate
-- **Statistical reliability filter:** DRGs retained only where n×p ≥ 10 and
+  unobservable; naive inclusion understates the true rate  
+- **Minimum-count reliability filter:** DRGs retained only where n×p ≥ 10 and
   n×(1−p) ≥ 10 (i.e., at least 10 readmissions and 10 non-readmissions; a
   normal-approximation rule of thumb), preventing unstable rates from
   low-volume diagnosis groups
@@ -106,31 +108,38 @@ CMS specifications; see Limitations.
 2. Place the CSV in `data/raw/` at the repo root (create the folder if it doesn't exist).
 3. Run `01_setup_table.sql` from the repo root — it creates the `claims_practice` database and `inpatient_claims` table, then loads the CSV via `LOAD DATA LOCAL INFILE`.
 4. Before running any other query file, set your MySQL connection's default database to `claims_practice` — no query file sets this itself.
+5. For `10c` and `14` only: download the CMS ICD-9-CM v28 diagnosis code titles (`CMS28_DESC_LONG_DX.txt`) from https://www.cms.gov/medicare/coding-billing/icd-10-codes/icd-9-cm-diagnosis-procedure-codes-abbreviated-and-full-code-titles into `data/raw/`, add your MySQL password to a `.env` file as `MYSQL_PASSWORD`, and run `python scripts/load_icd9_dx_lookup.py` from the repo root. It creates the `icd9_dx_lookup` table in `claims_practice` and loads 14,432 rows. The other queries do not need it.
 
 ## Analyses
+
+- `02b_beneficiary_coverage_quality_check.sql` — Share of beneficiary rows reporting 0 months of Part A coverage (5.49%) and a check of whether death dates explain them (they do not: only 307 of 18,854 zero-coverage rows, about 1.6%, have one); root cause still open
+- `02c_hidden_null_rate_check.sql` — Compares the empty-string death-date rate in the zero-coverage group (98.37%) with the whole beneficiary table (98.41%). The rates are effectively identical, so a blank death date does not distinguish the zero-coverage rows (informal comparison, no formal test)
+- `02d_row_grain_check.sql` — Tests whether one row equals one admission. 68 of 66,773 rows are SEGMENT = 2 continuation lines of existing claims; the readmission and utilization queries now filter to SEGMENT = 1. 160 (patient, admit date) pairs with distinct claim IDs remain unexplained (open)
+- `02e_segment_payment_check.sql` — Checks whether SEGMENT = 2 payments duplicate their parent claim's payment ($1,277,700 on 68 rows, about 0.2% of total payments; only 9 identical nonzero matches). Treated as additional payments, so the cost files (`12`, `12b`, `12c`, `12d`) are unchanged
 - `03a_los_by_drg.sql` / `03b_los_by_drg.sql` — Row-level and DRG-aggregated length of stay (exploratory; not carried into the final narrative)
 - `04_patient_admission_rank.sql` — Whole-period admission ranking by patient (exploratory precursor to the year-partitioned high-utilizer methodology in `13a`/`13b`)
 - `05_patient_readmission_analysis.sql` — 30-day readmission flagging, computed 2 ways (with and without single-day gaps); tradeoffs discussed in query comments
 - `06_readmission_by_drg.sql` — Readmission rates by DRG (single-day gaps included); minimum-count reliability filter applied (at least 10 readmissions and 10 non-readmissions)
-- `07_censoring_analysis.sql` — Quantifies censored discharges (324, 0.49%)
-  near the observation window end
-- `08_overall_readmission_rate.sql` — Overall 30-day readmission rate (9.67%,
-  single-day gaps included) across index discharges
+- `06b_readmission_by_drg_strict.sql` — Same as `06` but excludes readmissions one day or less after discharge (a working assumption, not CMS's planned-readmission methodology)
+- `06c_readmission_by_drg_comparison.sql` — Compares how many DRGs pass the reliability filter under the two definitions: 256 (single-day gaps included) vs. 243 (excluded)
+- `07_censoring_analysis.sql` — Quantifies censored discharges (323, 0.48%) near the observation window end
+- `08_overall_readmission_rate.sql` — Overall 30-day readmission rate (9.67%, single-day gaps included) across index discharges
+- `08b_overall_rate_ci.sql` — 95% confidence interval for the overall rate (see Key Findings)
 - `09_icd9_frequency_by_hrrp_condition.sql` (validates ICD-9-to-condition
   mapping logic, 50-row preview) / `11_hrrp_condition_readmission_rates.sql` —
   applies the mapping across the full dataset and computes readmission rates for 4 HRRP conditions vs. national benchmarks
-- `10_readmission_rate_by_icd9.sql` — Readmission rates by admitting ICD-9 diagnosis code (`ADMTNG_ICD9_DGNS_CD`), chosen over principal diagnosis for its clinical availability early in the patient encounter — see file header for rationale and predictive-modeling implications. Uses the same minimum-count reliability filter (at least 10 readmissions and 10 non-readmissions) as `06`, computed from a raw `readmission_count` (see`10_readmission_rate_by_icd9_validation.sql` for fix verification: 7 diagnosis codes recovered, no false positives)
-- `10b_readmission_rate_by_icd9_principal.sql` — Companion to `10_readmission_rate_by_icd9.sql`, using principal diagnosis (`ICD9_DGNS_CD_1`) instead of admitting diagnosis. Built to compare two distinct, both-valid framings — early clinical accessibility (10) vs. CMS-standard discharge basis (10b) — rather than treating one as a fix for the other. 
-Uses the same minimum-count reliability filter (at least 10 readmissions and 10 non-readmissions) as `10/06`.
-- `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` — Top 5% utilizer flagging by claims volume, full and first-claim-only variants (validated in `13a_high_utilizer_flagging_validation.sql`)  
-- `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95%
-  Wilson confidence intervals and national average comparison
+- `10_readmission_rate_by_icd9.sql` — Readmission rates by admitting ICD-9 diagnosis code (`ADMTNG_ICD9_DGNS_CD`), chosen over principal diagnosis for its clinical availability early in the patient encounter — see file header for rationale and predictive-modeling implications. Uses the same minimum-count reliability filter (at least 10 readmissions and 10 non-readmissions) as `06`, computed from a raw `readmission_count` (see `10_readmission_rate_by_icd9_validation.sql` for fix verification: 7 diagnosis codes recovered, no false positives)
+- `10b_readmission_rate_by_icd9_principal.sql` — Companion to `10_readmission_rate_by_icd9.sql`, using principal diagnosis (`ICD9_DGNS_CD_1`) instead of admitting diagnosis. Built to compare two distinct, both-valid framings — early clinical accessibility (10) vs. CMS-standard discharge basis (10b) — rather than treating one as a fix for the other. Uses the same minimum-count reliability filter (at least 10 readmissions and 10 non-readmissions) as `10/06`.
+- `10c_readmission_rate_by_icd9_principal_named.sql` — `10b` with a diagnosis description joined from the `icd9_dx_lookup` table (CMS v28); codes without a match still appear (LEFT JOIN)
+- `10d_admitting_vs_principal_divergence.sql` — How often the admitting and principal ICD-9 codes are the same code on the same claim: 20.59% of SEGMENT = 1 claims (20.76% excluding claims with a blank code in either field). Exact-code agreement only, not clinical equivalence
+- `13a_high_utilizer_flagging.sql` / `13b_high_utilizer_first_claim.sql` — Top 5% utilizer flagging by claims volume, full and first-claim-only variants (validated in `13a_high_utilizer_flagging_validation.sql`)
+- `14_icd9_lookup_match_rate.sql` — Checks how many claim rows find a description in `icd9_dx_lookup`: roughly 98% of admitting and over 99% of principal diagnosis codes (row level; unmatched codes not yet investigated)
+- `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95% Wilson confidence intervals, compared against the overall rate in this dataset (9.67%)
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates' 95% CIs lie entirely below benchmarks (informal comparison, not a formal test), consistent with synthetic data limitations.
 - `12_pmpm_analysis.sql` — average monthly inpatient cost per admitted patient by year (not a true PMPM — see Limitations)
 - `12b_true_pmpm.sql` — True PMPM calculation using BENE_HI_CVRAGE_TOT_MONS as the member-months denominator. Fixed 09/27/26 to include zero-coverage members (see Limitations and data_quality_log.md); corrected figures: 198.77 (2008), 190.45 (2009), 105.09 (2010).
 - `12c_pmpm_validation.sql` — Independent validation of `12b` via a structurally different query path; originally surfaced the zero-coverage exclusion gap (~$486K in 2010 alone), fixed 09/27/26 (see `12b`'s BUG HISTORY note and data_quality_log.md)
 - `12d_coverage_claims_contradiction_check.sql` — Tests whether zero-coverage member-years have paid inpatient claims; see Limitations
-
 
 ## Data Quality
 
@@ -175,6 +184,7 @@ https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-
   (`readmission_analysis.ipynb`, `hrrp_condition_readmission_analysis.ipynb`)
 - `data_quality_log.md` — running log of findings and decisions
 - `images/` — exported figures
+- `scripts/` — `load_icd9_dx_lookup.py`, which loads the ICD-9 diagnosis lookup table used by `10c` and `14`
 
 
 ## Roadmap
@@ -202,6 +212,7 @@ https://doi.org/10.1136/bmjopen-2024-085466
 Suter LG, Li SX, Grady JN, Lin Z, Wang Y, Bhat KR, Turkmani D, Spivack SB, Lindenauer PK, Merrill AR, Drye EE, Krumholz HM, Bernheim SM. National patterns of risk-standardized mortality and readmission after hospitalization for acute 
 myocardial infarction, heart failure, and pneumonia: update on publicly reported outcomes measures based on the 2013 release. J Gen Intern Med. 2014 Oct;29(10):1333-40. doi: 10.1007/s11606-014-2862-5. PMID: 24825244; PMCID: PMC4175654.
 
+Centers for Medicare & Medicaid Services. (2010). *ICD-9-CM Diagnosis and Procedure Codes: Abbreviated and Full Code Titles, Version 28* (effective October 1, 2010). U.S. Department of Health & Human Services. https://www.cms.gov/medicare/coding-billing/icd-10-codes/icd-9-cm-diagnosis-procedure-codes-abbreviated-and-full-code-titles
 
 ## Author
 
