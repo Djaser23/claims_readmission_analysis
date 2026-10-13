@@ -21,9 +21,9 @@ SUMMARY OF FINDINGS:
   profile them by discharge date and DRG.
 
 WHY IT MATTERS: LEAD() assumes one row per admission. 68 segment-2 rows
-(continuation lines of existing claims) break that assumption. Impact on
-the 9.67% rate not yet measured; likely small (68 rows is ~0.1% of the
-table). Fix: filter to SEGMENT = 1 and rerun 08.
+(continuation lines of existing claims) break that assumption. Measured
+impact of the fix: the overall 30-day rate is unchanged at 9.67%
+(6,423 / 66,449 before; 6,421 / 66,382 after). See the 10/12/26 note below.
 
 Separately, 160 pairs share a patient and admit date but are distinct
 claims (different CLM_IDs), not duplicates of one claim. Some may be
@@ -33,9 +33,13 @@ rows, which are confirmed non-admissions. Whether any should be excluded
 from the readmission calculation is an open question. CMS's actual HRRP
 methodology resolves cases like this with information this project doesn't
 have (see 06c).
-
-FIX (not yet applied): add WHERE SEGMENT = 1 to the first CTE in 05, 06, 08,
-10, 11, then rerun 08 and compare to the current 9.67%.
+ 
+- 10/12/26: Fix applied: SEGMENT = 1 added to 05, 06, 06b, 06c, 08, 08b, 10,
+10_validation, 10b, 10c, 11, 13a, 13a_validation, 13b, 04 and 07, and to 10d
+(admitting vs. principal match rate). Cost files checked separately in 02e.
+Impact: none at two decimals (6,423 / 66,449 before; 6,421 / 66,382 after).
+10d: all-rows match rate 20.67% -> 20.59%; 68 of the 69 both-blank rows were
+segment-2 rows.
 */
 
 

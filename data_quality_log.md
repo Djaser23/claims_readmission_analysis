@@ -152,3 +152,36 @@ planned-readmission methodology. CMS's algorithm classifies planned
 readmissions using procedure and diagnosis codes, not a time-gap cutoff 
 (source cited in 06c). Readers should treat the strict/lax distinction here 
 as an internal robustness check, not a CMS-aligned definition.
+
+## SEGMENT = 1 Row-Grain Fix — 10/12/26
+See 02d_row_grain_check.sql for the investigation (diagnosed 10/04/26).
+- 66,773 rows vs. 66,705 distinct CLM_IDs: 68 SEGMENT = 2 rows, confirmed to be
+  continuation lines of existing claims (same discharge date as their parent, not
+  new admissions). They could distort the LEAD() next-admission gap and inflate
+  denominators.
+- Fix: added SEGMENT = 1 before LEAD() in 04, 05, 06, 06b, 06c, 08, 08b, 10,
+  10_validation, 10b, 10c, 11, 13a, 13a_validation, 13b and 07, and to 10d
+  (no LEAD(); one row per claim). 06b and 06c were missing from the original
+  audit list and were fixed afterward.
+- Overall readmission rate: 9.67% to two decimals before and after
+  (6,423 / 66,449 before; 6,421 / 66,382 after). 67 admissions left the
+  denominator (placeholder rows: OTH/000 DRGs, blank admitting dx) and 2
+  readmissions were removed. The 68th segment-2 row sat in the censored window.
+- Censored discharges: 323 (0.48%), previously reported as 324 (0.49%).
+- 06c: reliable-DRG counts unchanged at 256 (lax) / 243 (strict).
+- 04: 67 patients changed rank, top patient unchanged. 13a/13b output and the 11
+  HRRP counts unchanged.
+- 10d: all-rows match rate 20.67% -> 20.59%; filtered match rate unchanged at 20.76%.  
+- Cost files (12, 12b, 12c, 12d) intentionally not changed: see the entry below.
+- Open: 160 (patient, admit date) pairs with distinct CLM_IDs, at most 7 of them
+  involving segment-2 rows. Cause not investigated; low priority.
+
+## Segment-2 Payment Check (cost files) — 10/12/26
+See 02e_segment_payment_check.sql.
+- Compared 68 SEGMENT = 2 rows to their SEGMENT = 1 parents (all 68 matched a parent).
+- Segment-2 payments: $1,277,700 (66 rows paid), about 0.2% of total payments.
+- Only 9 rows have an identical nonzero payment to the parent ($121,000 total, ~0.02%);
+  58 differ, and 3 are paid where the parent is $0.
+- Decision: treated as additional payments, not duplicates. 12, 12b, 12c, 12d unchanged.
+  The 9 identical-payment rows could be duplicates; impact is negligible.
+- Note: one row has a segment-2 payment of $700 vs. parent $7,000 (not investigated).

@@ -23,6 +23,7 @@ prior to any DRG-level ranking or benchmarking.
 
 Updated 10/09/26: added SEGMENT = 1 inside CTE2, before LEAD() runs
 (see 02d). Segment-2 rows no longer enter the admission sequence.
+The number of DRGs passing the reliability filter is unchanged at 243 (see 06c).
 */
 
 
