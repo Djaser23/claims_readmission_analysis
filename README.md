@@ -1,6 +1,6 @@
 # 30-Day Readmission Analysis — CMS Medicare Claims (DE-SynPUF)
 
-SQL-based analysis of 66,705 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against a national readmission benchmark. The inpatient file has 66,773 rows; 68 are continuation lines of existing claims (SEGMENT = 2), which are excluded from the readmission, utilization and diagnosis-code queries and kept in the cost queries (see `02d`, `02e`).
+SQL-based analysis of 66,705 Medicare inpatient claims identifying 30-day readmission patterns by diagnosis, with data quality auditing, censoring correction, and comparison against a national readmission benchmark. The inpatient file has 66,773 rows; 68 are continuation lines of existing claims (SEGMENT = 2). These are excluded from the readmission, high-utilizer and diagnosis-code analyses, except the exploratory queries `03a`, `03b` and `09`. The cost queries do not filter on SEGMENT, but the PMPM queries (`12b`, `12c`) leave these 68 rows out anyway because their claim start date is blank (see `02d`, `02e`, `02f`).
 
 > **Caveat:** DE-SynPUF is a synthetic dataset. Conclusions illustrate the method and are not real-world findings.
 
@@ -55,10 +55,9 @@ Given that mismatch and the synthetic data, this analysis still can't confidentl
 If applied to real claims data, this analysis would enable:
 - Care management targeting — high-utilizer flagging identifies the top 5% of admitted members by claims per member per year, enabling health plans to prioritize outreach and case management resources toward the highest-cost patients
 - Readmission prevention — 30-day readmission rates by DRG and HRRP condition identify which diagnosis groups carry disproportionate readmission risk, informing discharge planning and post-acute follow-up protocols
-- Cost trend monitoring — query 12 gives average monthly inpatient cost per
-admitted patient, not a true PMPM. 12b builds a true PMPM using
-BENE_HI_CVRAGE_TOT_MONS as the member-months denominator (see Limitations
-for the zero-coverage caveat).
+- Cost trend monitoring — query 12 gives average monthly inpatient cost per admitted patient, not a true PMPM.
+12b builds a true PMPM using BENE_HI_CVRAGE_TOT_MONS as the member-months denominator (see Limitations
+for the zero-coverage caveat). The PMPM decline from 2008 to 2010 reflects falling claim volume, which looks like an artifact of the synthetic file and should not be read as a real cost trend (see `02f`). 
 - HRRP Benchmark monitoring: Tracking of CMS Hospital Readmissions Reduction Program (HRRP) marked diagnosis codes against published rates informing how the cohort is performing against the known population.
 
 
@@ -115,7 +114,8 @@ CMS specifications; see Limitations.
 - `02b_beneficiary_coverage_quality_check.sql` — Share of beneficiary rows reporting 0 months of Part A coverage (5.49%) and a check of whether death dates explain them (they do not: only 307 of 18,854 zero-coverage rows, about 1.6%, have one); root cause still open
 - `02c_hidden_null_rate_check.sql` — Compares the empty-string death-date rate in the zero-coverage group (98.37%) with the whole beneficiary table (98.41%). The rates are effectively identical, so a blank death date does not distinguish the zero-coverage rows (informal comparison, no formal test)
 - `02d_row_grain_check.sql` — Tests whether one row equals one admission. 68 of 66,773 rows are SEGMENT = 2 continuation lines of existing claims; the readmission and utilization queries now filter to SEGMENT = 1. 160 (patient, admit date) pairs with distinct claim IDs remain unexplained (open)
-- `02e_segment_payment_check.sql` — Checks whether SEGMENT = 2 payments duplicate their parent claim's payment ($1,277,700 on 68 rows, about 0.2% of total payments; only 9 identical nonzero matches). Treated as additional payments, so the cost files (`12`, `12b`, `12c`, `12d`) are unchanged
+- `02e_segment_payment_check.sql` — Checks whether SEGMENT = 2 payments duplicate their parent claim's payment ($1,277,700 on 68 rows, about 0.2% of total payments; only 9 identical nonzero matches). Treated as additional payments, not duplicates, so the cost files (`12`, `12b`, `12c`, `12d`) are unchanged. All 68 rows have a blank `CLM_FROM_DT`, so the date-filtered PMPM queries (`12b`, `12c`) leave them out; the effect is at most about $1 PMPM in any one year (see `02f`).
+- `02f_claim_volume_by_period_check.sql` — Checks whether inpatient claim volume is stable across the file. Claims fall from 25,231 (2009) to 13,572 (2010) while member-months fall about 2% and payment per claim stays flat, and monthly claims taper through 2010. The 2010 PMPM decline is a claim-volume effect, more consistent with how the synthetic file was built than with a cost trend (mechanism not established)
 - `03a_los_by_drg.sql` / `03b_los_by_drg.sql` — Row-level and DRG-aggregated length of stay (exploratory; not carried into the final narrative)
 - `04_patient_admission_rank.sql` — Whole-period admission ranking by patient (exploratory precursor to the year-partitioned high-utilizer methodology in `13a`/`13b`)
 - `05_patient_readmission_analysis.sql` — 30-day readmission flagging, computed 2 ways (with and without single-day gaps); tradeoffs discussed in query comments
@@ -137,7 +137,7 @@ CMS specifications; see Limitations.
 - `readmission_analysis.ipynb` — Top 20 readmission rates by DRG with 95% Wilson confidence intervals, compared against the overall rate in this dataset (9.67%)
 - `hrrp_condition_readmission_analysis.ipynb` — Observed 30-day readmission rates for 4 HRRP conditions (AMI, Heart Failure, Pneumonia, COPD) compared against 2010 national benchmarks. All observed rates' 95% CIs lie entirely below benchmarks (informal comparison, not a formal test), consistent with synthetic data limitations.
 - `12_pmpm_analysis.sql` — average monthly inpatient cost per admitted patient by year (not a true PMPM — see Limitations)
-- `12b_true_pmpm.sql` — True PMPM calculation using BENE_HI_CVRAGE_TOT_MONS as the member-months denominator. Fixed 09/27/26 to include zero-coverage members (see Limitations and data_quality_log.md); corrected figures: 198.77 (2008), 190.45 (2009), 105.09 (2010).
+- `12b_true_pmpm.sql` — True PMPM calculation using BENE_HI_CVRAGE_TOT_MONS as the member-months denominator. Fixed 09/27/26 to include zero-coverage members (see Limitations and data_quality_log.md); corrected figures: 198.77 (2008), 190.45 (2009), 105.09 (2010). The 2010 decline reflects falling claim volume (likely a file artifact, see `02f`) and should not be read as a cost trend.
 - `12c_pmpm_validation.sql` — Independent validation of `12b` via a structurally different query path; originally surfaced the zero-coverage exclusion gap (~$486K in 2010 alone), fixed 09/27/26 (see `12b`'s BUG HISTORY note and data_quality_log.md)
 - `12d_coverage_claims_contradiction_check.sql` — Tests whether zero-coverage member-years have paid inpatient claims; see Limitations
 
@@ -161,7 +161,8 @@ zero-coverage members from both numerator and denominator, based on a flawed bel
 - The high-utilizer flagging filter in files 13a_high_utilizer_flagging and 13b_high_utilizer_first_claim utilizes the ROW_NUMBER() window function instead of PERCENT_RANK() in order to deterministically produce approximately 5% of high utilizers per year. Due to this methodology, ties at the cutoff boundary are broken by patient ID, meaning members with identical claim counts near the threshold may be arbitrarily included or excluded.
 - The HRRP condition mapping (`09_icd9_frequency_by_hrrp_condition.sql`, `11_hrrp_condition_readmission_rates.sql`) uses a single leading ICD-9 prefix per condition (e.g. `428%` for Heart Failure) as a simplified proxy. This simplification has not been validated against any official CMS specification of condition-defining diagnosis codes.
 - The principal-diagnosis field choice for HRRP condition mapping is sourced to Suter et al. (2014) for AMI, Heart Failure, and Pneumonia only; that study does not cover COPD, so the same field choice is applied to COPD by extension, without separate citation support.
-
+- Row grain: 68 of the 66,773 inpatient rows are SEGMENT = 2 continuation lines of existing claims, not separate admissions. They are excluded from the readmission, utilization and diagnosis-code analyses, except the exploratory queries `03a`, `03b` and `09`. Their payments ($1,277,700) appear to be additional payments, not duplicates, though 9 rows carry an identical nonzero payment to their parent (about $121,000; unresolved). A further 160 (patient, admit date) pairs with distinct claim IDs remain unexplained (see `02d`, `02e`).
+- Claim volume is not stable across the file: monthly inpatient claims ramp up from late 2007, plateau from March 2008, and taper through 2010 (257 claims in December 2010 vs. about 2,300-2,600 a month from March through December 2008) while enrollment is nearly flat. Year-over-year comparisons such as PMPM may reflect how the synthetic file was constructed more than real change; the mechanism has not been established (see `02f`).
 
 
 ## Data Source
