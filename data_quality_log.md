@@ -190,3 +190,6 @@ See 02e_segment_payment_check.sql.
 - 14_icd9_lookup_match_rate.sql runs on one row per claim (SEGMENT = 1), as 10d does.
   Totals 66,773 -> 66,705. Mapped counts unchanged (65,483 admitting, 66,456 principal): the 68 continuation rows have blank codes and never matched the lookup.
   Match rates 98.07% -> 98.17% (admitting) and 99.53% -> 99.63% (principal).
+
+**ICD-9 Lookup Table Vintage Mismatch — 10/15/26**
+`icd9_dx_lookup` is ICD-9-CM version 28, effective October 2010 (see Setup, README). Claims span 2008–2010, so descriptions for 2008 and 2009 claims are matched against code definitions that postdate them by up to two years. A small number of diagnosis codes present in the 2008–2010 claims may not appear in v28 at all, or may have been redefined, and will show no matching description. Affects the Tableau dashboard's diagnosis-driver sheet (admitting); not yet corrected or investigated further.  
