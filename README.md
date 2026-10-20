@@ -63,7 +63,7 @@ for the zero-coverage caveat). The PMPM decline from 2008 to 2010 reflects falli
 
 ![Top 20 DRGs by 30-Day Readmission Rate](images/top20_drg_readmission_rate.png) 
 
-*Dashed line: overall 30-day readmission rate in this dataset (9.67%). The 14.67% national benchmark discussed above is context only and is not drawn. Error bars: 95% Wilson CIs. These are the 20 highest rates among DRGs meeting the minimum-count filter, so they tend to overstate true rates.* 
+*Red dashed line: overall 30-day readmission rate in this dataset (9.67%). Yellow dotted line: 2025 national all-cause benchmark (14.67%). Error bars: 95% Wilson CIs. These are the 20 highest rates among the 256 DRGs meeting the minimum-count filter, so they tend to overstate true rates. With 256 DRGs, some intervals will sit above the 9.67% line by chance alone; these DRGs are candidates for continued monitoring, not confirmed high-risk groups.*
 
 ![HRRP Condition Readmission Rates vs National Benchmarks](images/hrrp_condition_benchmark_comparison.png)
 
