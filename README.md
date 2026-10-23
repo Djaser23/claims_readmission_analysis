@@ -102,6 +102,7 @@ CMS specifications; see Limitations.
 
 ## Setup
 
+0. Install Python dependencies: `pip install -r requirements.txt`
 1. Download the CMS DE-SynPUF Inpatient Claims Sample 1 file (2008-2010) from the
    Data Source link below.
 2. Place the CSV in `data/raw/` at the repo root (create the folder if it doesn't exist).

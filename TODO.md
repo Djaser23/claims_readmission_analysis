@@ -38,6 +38,10 @@
 - [x] ICD-9 diagnosis description lookup table — scripts/load_icd9_dx_lookup.py parses CMS v28 file (CMS28_DESC_LONG_DX.txt, Latin-1, 14,432 codes), creates `icd9_dx_lookup`, loads all rows and verifies the row count
 - [x] Admitting vs. principal diagnosis comparison (10d): ~79% of claims diverge (20.67% match; 20.76% excluding blank codes); lookup match rates in 14 (98.07% admitting, 99.53% principal); named principal-diagnosis rates in 10c
 - [x] Strict vs. lax readmission definition comparison (06b, 06c): 256 DRGs pass the minimum-count reliability filter under the lax definition (gap > 0 days) vs. 243 under the strict one (gap > 1 day), a 13-DRG difference; the 1-day exclusion is a working assumption, not CMS methodology; documented in data_quality_log.md
+- [x] Add Tableau/PowerBI visualization
+- [x] Add requirements.txt listing project dependencies (pandas, matplotlib, mysql-connector-python, python-dotenv, statsmodels, numpy)
+- [x] Reword "CLT" in the comments of 06 and 06b to "minimum-count reliability filter (at least 10 readmissions and 10 non-readmissions; normal-approximation rule of thumb)" to match the README
+- [x] Name or replace the 14.67% all-cause benchmark source (Definitive Healthcare, 2025: commercial subset of ~4,100 of ~9,000 hospitals, sampling undisclosed)
 
 ## In Progress
 
@@ -55,12 +59,8 @@
 ## Upcoming
 
 - [ ] Polish and document final analyses
-- [ ] Add Tableau/PowerBI visualization
-- [ ] Add requirements.txt listing project dependencies (pandas, matplotlib, mysql-connector-python, python-dotenv)
 - [ ] Join DRG codes to their descriptions (CMS DRG PDF) — both in queries and in readmission_analysis.ipynb's chart, which currently shows bare codes
 - [ ] Rename 12_pmpm_analysis.sql's `three_years` CTE — misleading name, no additional year filtering happens there
-- [ ] Reword "CLT" in the comments of 06 and 06b to "minimum-count reliability filter (at least 10 readmissions and 10 non-readmissions; normal-approximation rule of thumb)" to match the README
-- [ ] Name or replace the 14.67% all-cause benchmark source (Definitive Healthcare, 2025: commercial subset of ~4,100 of ~9,000 hospitals, sampling undisclosed)
 - [ ] 13a: `inpatient_cte` skips the 2008–2010 claim-date filter that `full_years` applies; add the filter or a comment (does not change who is flagged)
 - [ ] 12c: confirm "~34 members affected in 2010" is still the right member count (12d reports 42 claims / $486,000 for 2010)
 - [ ] Dedicated planning session: map (not build) predictive layer — logistic regression vs. tree-based tradeoffs, admitting vs. principal diagnosis leakage question
